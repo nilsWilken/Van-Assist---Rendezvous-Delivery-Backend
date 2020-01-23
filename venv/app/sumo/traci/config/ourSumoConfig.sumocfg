@@ -1,0 +1,17 @@
+<configuration>
+    <input>
+       <net-file value="Heidelberg_Streetnames.net.xml"/>
+       <route-files value="activitygen_vanassist_26.rou.xml" />
+        <additional-files value="parkingAreas.add.xml"/>
+
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="86400"/>
+    </time>
+     <processing>
+        <step-method.ballistic value="true"/>
+    </processing>
+
+</configuration>

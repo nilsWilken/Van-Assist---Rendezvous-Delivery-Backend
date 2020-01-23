@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 04/29/19 22:02:44 by Eclipse SUMO netedit Version 1.1.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="D:\OneDrive\Dokumente\Master\FSS2019\Team%20Project\FirstMilestone\ActivityGen\parkingAreas\Heidelberg_Streetnames.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="D:\OneDrive\Dokumente\Master\FSS2019\Team%20Project\FirstMilestone\ActivityGen\parkingAreas\Heidelberg_Streetnames.net.xml"/>
+        <output.street-names value="true"/>
+    </output>
+
+    <processing>
+        <geometry.max-grade.fix value="false"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.5"/>
+        <rectangular-lane-cut value="false"/>
+    </junctions>
+
+    <pedestrian>
+        <walkingareas value="false"/>
+    </pedestrian>
+
+</configuration>
+-->
+
+<additional>
+    <parkingArea id="parkingArea_-24794046#1_0_88" name="Undefined" length="10" lane="-24794046#1_0" roadsideCapacity="1" startPos="36.36" endPos="46.36"/>
+    <parkingArea id="parkingArea_-24798195#5_0_53" name="Seitzstraße" length="10" lane="-24798195#5_0" roadsideCapacity="1" startPos="31.15" endPos="41.15"/>
+    <parkingArea id="parkingArea_-24828111#0_0_86" name="Undefined" length="10" lane="-24828111#0_0" roadsideCapacity="1" startPos="92.73" endPos="102.73"/>
+    <parkingArea id="parkingArea_-24828111#2_0_81" name="Undefined" length="10" lane="-24828111#2_0" roadsideCapacity="1" startPos="39.30" endPos="49.30"/>
+    <parkingArea id="parkingArea_-25806374#1_0_90" name="Undefined" length="10" lane="-25806374#1_0" roadsideCapacity="1" startPos="26.92" endPos="36.92"/>
+    <parkingArea id="parkingArea_-25806374#2_0_88" name="Undefined" length="10" lane="-25806374#2_0" roadsideCapacity="1" startPos="56.34" endPos="66.34"/>
+    <parkingArea id="parkingArea_-25814475#0_0_14" name="Wilkenstraße" length="10" lane="-25814475#0_0" roadsideCapacity="1" startPos="19.38" endPos="29.38"/>
+    <parkingArea id="parkingArea_-394992023_0_3" name="Jahnstraße 1 1" length="20" lane="-394992023_0" roadsideCapacity="4" startPos="54.87" endPos="64.87"/>
+    <parkingArea id="parkingArea_-4084860#11_0_61" name="Undefined" length="10" lane="-4084860#11_0" roadsideCapacity="1" startPos="42.22" endPos="52.22"/>
+    <parkingArea id="parkingArea_-4084860#9_0_63" name="Undefined" length="10" lane="-4084860#9_0" roadsideCapacity="1" startPos="43.04" endPos="53.04"/>
+    <parkingArea id="parkingArea_-429024483#1_0_74" name="Undefined" length="10" lane="-429024483#1_0" roadsideCapacity="1" startPos="31.43" endPos="41.43"/>
+    <parkingArea id="parkingArea_-429024483#3_0_13" name="Mönchhofsstraße " length="10" lane="-429024483#3_0" roadsideCapacity="1" startPos="21.70" endPos="31.70"/>
+    <parkingArea id="parkingArea_-49077230#1_0_4" name="Jahnstraße 1 1" length="20" lane="-49077230#1_0" roadsideCapacity="4" startPos="100.28" endPos="110.28"/>
+    <parkingArea id="parkingArea_-49077230#1_0_5" name="Jahnstraße 1 1" length="20" lane="-49077230#1_0" roadsideCapacity="4" startPos="32.70" endPos="42.70"/>
+    <parkingArea id="parkingArea_-5132863#4_0_71" name="Undefined" length="10" lane="-5132863#4_0" roadsideCapacity="1" startPos="75.19" endPos="85.19"/>
+    <parkingArea id="parkingArea_-5132863#6_0_69" name="Undefined" length="10" lane="-5132863#6_0" roadsideCapacity="1" startPos="93.69" endPos="103.69"/>
+    <parkingArea id="parkingArea_-596760204_0_17" name="Undefined" length="10" lane="-596760204_0" roadsideCapacity="1" startPos="13.33" endPos="23.33"/>
+    <parkingArea id="parkingArea_11942798#1_0_20" name="Undefined" length="10" lane="11942798#1_0" roadsideCapacity="1" startPos="60.69" endPos="70.69"/>
+    <parkingArea id="parkingArea_154938177#0_0_17" name="Moltkestraße" length="10" lane="154938177#0_0" roadsideCapacity="1" startPos="74.79" endPos="84.79"/>
+    <parkingArea id="parkingArea_154938177#1_0_58" name="Undefined" length="10" lane="154938177#1_0" roadsideCapacity="1" startPos="45.20" endPos="55.20"/>
+    <parkingArea id="parkingArea_155055433#5_0_64" name="Undefined" length="10" lane="155055433#5_0" roadsideCapacity="1" startPos="131.38" endPos="141.38"/>
+    <parkingArea id="parkingArea_155055433#6_0_57" name="Undefined" length="10" lane="155055433#6_0" roadsideCapacity="1" startPos="186.34" endPos="196.34"/>
+    <parkingArea id="parkingArea_155055433#7_0_72" name="Undefined" length="10" lane="155055433#7_0" roadsideCapacity="1" startPos="43.72" endPos="53.72"/>
+    <parkingArea id="parkingArea_155055444#5_0_59" name="Undefined" length="10" lane="155055444#5_0" roadsideCapacity="1" startPos="15.80" endPos="25.80"/>
+    <parkingArea id="parkingArea_155055444#6_0_32" name="Undefined" length="10" lane="155055444#6_0" roadsideCapacity="1" startPos="60.32" endPos="70.32"/>
+    <parkingArea id="parkingArea_155055444#7_0_29" name="Undefined" length="10" lane="155055444#7_0" roadsideCapacity="1" startPos="50.66" endPos="60.66"/>
+    <parkingArea id="parkingArea_155055444#9_0_24" name="Undefined" length="10" lane="155055444#9_0" roadsideCapacity="1" startPos="46.02" endPos="56.02"/>
+    <parkingArea id="parkingArea_24794046#1_0_89" name="Undefined" length="10" lane="24794046#1_0" roadsideCapacity="1" startPos="39.98" endPos="49.98"/>
+    <parkingArea id="parkingArea_24798195#2_0_50" name="Undefined" length="10" lane="24798195#2_0" roadsideCapacity="1" startPos="19.68" endPos="29.68"/>
+    <parkingArea id="parkingArea_24798195#3_0_51" name="Undefined" length="10" lane="24798195#3_0" roadsideCapacity="1" startPos="39.04" endPos="49.04"/>
+    <parkingArea id="parkingArea_24798195#4_0_73" name="Undefined" length="10" lane="24798195#4_0" roadsideCapacity="1" startPos="24.98" endPos="34.98"/>
+    <parkingArea id="parkingArea_24828111#0_0_16" name="Seitzstraße" length="10" lane="24828111#0_0" roadsideCapacity="1" startPos="89.49" endPos="99.49"/>
+    <parkingArea id="parkingArea_24828111#1_0_85" name="Undefined" length="10" lane="24828111#1_0" roadsideCapacity="1" startPos="62.16" endPos="72.16"/>
+    <parkingArea id="parkingArea_25806377#0_0_76" name="Undefined" length="10" lane="25806377#0_0" roadsideCapacity="1" startPos="51.26" endPos="61.26"/>
+    <parkingArea id="parkingArea_25806377#0_0_77" name="Undefined" length="10" lane="25806377#0_0" roadsideCapacity="1" startPos="125.28" endPos="135.28"/>
+    <parkingArea id="parkingArea_25814475#0_0_78" name="Undefined" length="10" lane="25814475#0_0" roadsideCapacity="1" startPos="34.68" endPos="44.68"/>
+    <parkingArea id="parkingArea_25814475#1_0_80" name="Undefined" length="10" lane="25814475#1_0" roadsideCapacity="1" startPos="57.98" endPos="67.98"/>
+</additional>
