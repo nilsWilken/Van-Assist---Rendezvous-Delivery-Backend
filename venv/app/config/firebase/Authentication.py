@@ -5,17 +5,17 @@ from flask import request
 
 """Checks if the Firebase Authentication is correct"""
 def isAuthenticated(request):
-	return True
-    #id_token  = request.headers.get('uid')
+	#return True
+    id_token  = request.headers.get('uid')
 
-    #if hasWildcard(id_token):
-    #    return True
-    #try:
-    #    decoded_token = auth.verify_id_token(id_token)
-    #    uid = decoded_token['uid']
-    #    return True
-    #except Exception as e:
-    #    return False
+    if hasWildcard(id_token):
+        return True
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+        return True
+    except Exception as e:
+        return False
 
 
 """Direct access is granted when uid is vanassist19 -> only use for testing"""
