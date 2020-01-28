@@ -27,4 +27,4 @@ if vanassistubuntu_found == False:
 
 client.images.build(path=".", tag="vanassistwebservice:1.0", rm="true")
 
-client.containers.run(image="vanassistwebservice:1.0", ports={"8000/tcp":"8000"}, detach="true")
+client.containers.run(image="vanassistwebservice:1.0", ports={"8000/tcp":"8000"}, detach="false")
