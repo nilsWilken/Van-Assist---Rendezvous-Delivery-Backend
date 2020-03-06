@@ -12,17 +12,18 @@ class Parcel(db.Model):
     additional_recipient_information = db.Column('additional_recipient_information', db.Unicode)
     latitude = db.Column('latitude', db.Unicode)
     longitude = db.Column('longitude', db.Unicode)
-    address = db.Column('address', db.Unicode)
+    floor = db.Column('floor', db.Integer)
     city = db.Column('city', db.Unicode)
+    address = db.Column('address', db.Unicode)
     additional_address_information = db.Column('additional_address_information', db.Unicode)
-    weight = db.Column('weight', db.Integer)
-    width = db.Column('width', db.Integer)
-    height = db.Column('height', db.Integer)
-    length = db.Column('length', db.Integer)
+    weight = db.Column('weight', db.Float)
+    width = db.Column('width', db.Float)
+    height = db.Column('height', db.Float)
+    length = db.Column('length', db.Float)
     verification_token = db.Column('verification_token', db.Unicode)
 
 
-    def __init__(self, name, state, name_of_recipient, additional_recipient_information, phone_number, latitude, longitude, address, city, additional_address_information, weight, width, height, length, verification_token):
+    def __init__(self, name, state, name_of_recipient, additional_recipient_information, phone_number, latitude, longitude, floor, address, city, additional_address_information, weight, width, height, length, verification_token):
         self.id = int(round(time.time() * 1000))
         self.state = state
         self.name_of_recipient = name_of_recipient
@@ -30,8 +31,9 @@ class Parcel(db.Model):
         self.phone_number = phone_number
         self.latitude = latitude
         self.longitude = longitude
-        self.address = address
+        self.floor = floor
         self.city = city
+        self.address = address
         self.additional_address_information = additional_recipient_information
         self.weight = weight
         self.width = width
@@ -50,8 +52,9 @@ class Parcel(db.Model):
             'delivery_position':position,
             'latitude':self.latitude,
             'longitude':self.longitude,
+            'floor':self.floor,
+            'city': self.city,
             'address':self.address,
-            'city':self.city,
             'additional_address_information':self.additional_address_information,
             'weight':self.weight,
             'width':self.width,
