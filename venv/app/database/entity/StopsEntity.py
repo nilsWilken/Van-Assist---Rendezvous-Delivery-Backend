@@ -1,6 +1,5 @@
 from flask import jsonify
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import ForeignKey
+from app.sql_alchemy_conf import *
 import time
 import json
 
