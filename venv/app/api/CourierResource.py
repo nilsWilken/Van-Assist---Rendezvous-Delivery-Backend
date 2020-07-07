@@ -45,6 +45,11 @@ def changeLanguage():
         return jsonify(ResponseMessage.NOT_FOUND.serialize())
 
 
+def startTraci(seconds_since_midnight, fcm_token):
+    traciServer = TraciServer()
+    traciServer.start(seconds_since_midnight, fcm_token)
+    
+
 """" Header: uid, courier_id, start_time_in_seconds """
 @app.route('/courier/day/start', methods=['GET'])
 def startDay():
@@ -75,15 +80,16 @@ def finishDay():
     if courier_validation_response.status != HttpStatus.OK:
         return jsonify(courier_validation_response.serialize())
     else:
-        courier_id = request.headers.get('courier_id')
-        if courier_id == '474ccac0-92d2-4f3f-8d39-b79557a455f5':
-            if TraciHandler.simulationIsRunning:
-                TraciHandler.stopSimulation = True
-                while TraciHandler.simulationIsRunning == True:
-                    """wait"""
-                return jsonify(ResponseMessage.OK.serialize())
-
-            return jsonify(ResponseMessage.NOT_FOUND.serialize())
+        if TraciHandler.simulationIsRunning:
+            TraciHandler.stopSimulation = True
+            while TraciHandler.simulationIsRunning == True:
+                """wait"""
+                
+            print("---------------------")
+            print("Simulation stopped!")
+            print("---------------------")
+                
+            return jsonify(ResponseMessage.OK.serialize())
         return jsonify(ResponseMessage.NOT_FOUND.serialize())
 
 
@@ -142,10 +148,6 @@ def disableHelpMode():
             return jsonify(Response(HttpStatus.OK, HttpStatusMessage.OK, courier.serialize()).serialize())
         return jsonify(ResponseMessage.NOT_FOUND.serialize())
 
-
-def startTraci(seconds_since_midnight, fcm_token):
-    traciServer = TraciServer()
-    traciServer.start(seconds_since_midnight, fcm_token)
 
 
 @app.route('/courier/notification', methods=['GET'])

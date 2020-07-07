@@ -45,7 +45,7 @@ def getAllParkingAreas():
     if Authentication.isAuthenticated(request) == False:
         return jsonify(ResponseMessage.NETWORK_AUTHENTICATION_REQUIRED.serialize())
     elif TraciHandler.parkingAreasAreLoading:
-        print("parking aread are already loading ")
+        print("parking aread are loading... ")
         return jsonify(ResponseMessage.PARING_AREAS_ARE_LOADING.serialize())
     else:
         TraciHandler.parkingAreasAreLoading = True

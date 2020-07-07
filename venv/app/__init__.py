@@ -27,7 +27,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = dbconnection
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 sql_alchemy_conf.db = SQLAlchemy(app)
 
-from app.api import ParcelResource, CourierResource, VehicleResource
+from app.api import ParcelResource, CourierResource, VehicleResource, StopsResource
 
 print('DATABASE CONNECTED')
 
