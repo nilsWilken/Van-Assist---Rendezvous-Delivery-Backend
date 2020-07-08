@@ -20,10 +20,11 @@ class Parcel(db.Model):
     width = db.Column('width', db.Float)
     height = db.Column('height', db.Float)
     length = db.Column('length', db.Float)
+    parkingArea = db.Column('parkingArea', db.Unicode)
     verification_token = db.Column('verification_token', db.Unicode)
 
 
-    def __init__(self, name, state, name_of_recipient, additional_recipient_information, phone_number, latitude, longitude, floor, address, city, additional_address_information, weight, width, height, length, verification_token):
+    def __init__(self, name, state, name_of_recipient, additional_recipient_information, phone_number, latitude, longitude, floor, address, city, additional_address_information, weight, width, height, length, parkingArea, verification_token):
         self.id = int(round(time.time() * 1000))
         self.state = state
         self.name_of_recipient = name_of_recipient
@@ -39,6 +40,7 @@ class Parcel(db.Model):
         self.width = width
         self.height = height
         self.length = length
+        self.parkingArea = parkingArea
         self.verification_token = verification_token
 
     def serialize(self, position):
@@ -60,5 +62,6 @@ class Parcel(db.Model):
             'width':self.width,
             'height':self.height,
             'length':self.length,
+            'parkingArea': self.parkingArea,
             'verification_token': self.verification_token
         }

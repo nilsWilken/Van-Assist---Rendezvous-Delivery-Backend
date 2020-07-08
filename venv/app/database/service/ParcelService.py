@@ -8,6 +8,11 @@ from app.config.ParcelStatus import ParcelStatus
 import uuid
 
 
+def serializeParcelWithPosition(parcel, delivery_position):
+    parcel_dict = parcel.serialize()
+    parcel_dict["delivery_position"] = delivery_position
+    return parcel_dict
+
 """Fetches List of all parcel by the courierId"""
 def getParcelListByCourierId(courier_id):
 
@@ -16,7 +21,7 @@ def getParcelListByCourierId(courier_id):
     for delivery in delivery_list:
         parcel = getParcel(delivery.parcel_id)
         if parcel != None:
-            result_list.append({
+            """result_list.append({
                 'id': parcel.id,
                 'state': parcel.state,
                 'name_of_recipient': parcel.name_of_recipient,
@@ -34,7 +39,8 @@ def getParcelListByCourierId(courier_id):
                 'length': parcel.length,
                 'verification_token': parcel.verification_token,
                 'delivery_position':delivery.parcel_delivery_position
-            })
+            })"""
+            result_list.append(serializeParcelWithPosition(parcel, delivery.parcel_delivery_position))
 
     courier = CourierService.getCourierById(courier_id)
     response = {'parcel_list': result_list,
@@ -48,7 +54,7 @@ def getParcelListByDeliveryList(delivery_list):
     for delivery in delivery_list:
         parcel = getParcel(delivery.parcel_id)
         if parcel != None:
-            result_list.append({
+            """result_list.append({
                 'id': parcel.id,
                 'state': parcel.state,
                 'name_of_recipient': parcel.name_of_recipient,
@@ -66,7 +72,8 @@ def getParcelListByDeliveryList(delivery_list):
                 'length': parcel.length,
                 'verification_token': parcel.verification_token,
                 'delivery_position': delivery.parcel_delivery_position
-            })
+            })"""
+            result_list.append(serializeParcelWithPosition(parcel, delivery.parcel_delivery_position))
     return result_list
 
 
