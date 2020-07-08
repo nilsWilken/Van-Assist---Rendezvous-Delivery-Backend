@@ -43,7 +43,7 @@ class Parcel(db.Model):
         self.parkingArea = parkingArea
         self.verification_token = verification_token
 
-    def serialize(self, position):
+    def serialize(self):
 
         return {
             'id': self.id,
@@ -51,7 +51,6 @@ class Parcel(db.Model):
             'name_of_recipient':self.name_of_recipient,
             'additional_recipient_information':self.additional_recipient_information,
             'phone_number':self.phone_number,
-            'delivery_position':position,
             'latitude':self.latitude,
             'longitude':self.longitude,
             'floor':self.floor,
@@ -65,3 +64,8 @@ class Parcel(db.Model):
             'parkingArea': self.parkingArea,
             'verification_token': self.verification_token
         }
+
+    def serializeWithPosition(self, delivery_position):
+        parcel_dict = self.serialize()
+        parcel_dict["delivery_position"] = delivery_position
+        return parcel_dict
