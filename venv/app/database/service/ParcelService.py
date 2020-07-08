@@ -16,7 +16,7 @@ def getParcelListByCourierId(courier_id):
     for delivery in delivery_list:
         parcel = getParcel(delivery.parcel_id)
         if parcel != None:
-            result_list.append(parcel.serializeParcelWithPosition(delivery.parcel_delivery_position))
+            result_list.append(parcel.serializeWithPosition(delivery.parcel_delivery_position))
 
     courier = CourierService.getCourierById(courier_id)
     response = {'parcel_list': result_list,
@@ -30,7 +30,7 @@ def getParcelListByDeliveryList(delivery_list):
     for delivery in delivery_list:
         parcel = getParcel(delivery.parcel_id)
         if parcel != None:
-            result_list.append(parcel.serializeParcelWithPosition(delivery.parcel_delivery_position))
+            result_list.append(parcel.serializeWithPosition(delivery.parcel_delivery_position))
     return result_list
 
 
