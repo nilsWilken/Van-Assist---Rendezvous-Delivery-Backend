@@ -6,14 +6,14 @@ import json
 class Stop(db.Model):
     __tablename__ = 'stops'
     id = db.Column('id', db.Unicode, primary_key=True)
-    adress = db.Column("adress", db.Unicode)
+    address = db.Column("address", db.Unicode)
     latitude = db.Column("latitude", db.Unicode)
     longitude = db.Column("longitude", db.Unicode)
 
 
-    def __init__(self, id, adress, latitude, longitude):
+    def __init__(self, id, address, latitude, longitude):
         self.id = id
-        self.adress = adress
+        self.address = address
         self.latitude = latitude
         self.longitude = longitude
 
@@ -21,7 +21,7 @@ class Stop(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'adress': self.adress,
+            'address': self.address,
             'latitude': self.latitude,
             'longitude': self.longitude
         }
