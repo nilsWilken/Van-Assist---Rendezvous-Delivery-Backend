@@ -1,10 +1,10 @@
-from app.database.entity.StopsEntity import Stop
+from app.database.entity.ParkingAreaEntity import ParkingArea
 from app.sql_alchemy_conf import db
 from sqlalchemy import update
 
 
 def getParkingAreaList():
-    parking_areas = db.session.query(Stop).all()
+    parking_areas = db.session.query(ParkingArea).all()
     result_list = []
 
     for parking_area in parking_areas:
@@ -16,7 +16,7 @@ def getParkingAreaList():
 
 
 def getParkingArea(id):
-    parking_area = Stop.query.get(id)
+    parking_area = ParkingArea.query.get(id)
     return parking_area
 
 

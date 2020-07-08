@@ -3,8 +3,8 @@ from app.sql_alchemy_conf import *
 import time
 import json
 
-class Stop(db.Model):
-    __tablename__ = 'stops'
+class ParkingArea(db.Model):
+    __tablename__ = 'parkingAreas'
     id = db.Column('id', db.Unicode, primary_key=True)
     address = db.Column("address", db.Unicode)
     latitude = db.Column("latitude", db.Unicode)
