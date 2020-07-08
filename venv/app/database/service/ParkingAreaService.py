@@ -20,4 +20,9 @@ def getParkingArea(id):
     return parking_area
 
 
+def getNextParkingArea():
+    #TODO: Implement logic to determine next parking area
+    return getParkingArea('hd_0')
+
+
 

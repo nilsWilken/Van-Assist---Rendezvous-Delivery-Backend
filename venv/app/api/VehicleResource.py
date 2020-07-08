@@ -13,6 +13,7 @@ from app.database.service import ParcelService
 from app.config.firebase import Authentication
 from app.Location import Location
 from app.sumo.traci import TraciHandler
+from app.database.service import ParkingAreaService
 import uuid
 
 from app.sumo.traci import TraciHandler
@@ -35,7 +36,14 @@ def setNextparkingLocation():
         newVehicleParkingEdge = request.json['parkingArea']['edge']
         paResponse = setNewParkingPos(newVehicleParkingPos, newVehicleParkingEdge)
         response = Response(HttpStatus.CREATED, "", paResponse)
-        return jsonify(response.serialize())
+        return jsonify(response.serialize()) 
+
+
+@app.route('/vehicle/parkingArea/getNext', methods=['GET'])
+def getNextParkingArea():
+    result = ParkingAreaService.getNextParkingArea()
+    response = Response(HttpStatus.OK, "", result)
+    return jsonify(response.serialize())
 
 
 """ Header: uid, courier_id """
