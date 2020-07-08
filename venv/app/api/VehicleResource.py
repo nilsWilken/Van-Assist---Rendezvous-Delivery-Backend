@@ -42,7 +42,7 @@ def setNextparkingLocation():
 @app.route('/vehicle/parkingArea/getNext', methods=['GET'])
 def getNextParkingArea():
     result = ParkingAreaService.getNextParkingArea()
-    response = Response(HttpStatus.OK, "", result)
+    response = Response(HttpStatus.OK, "", {"next_parking_area": result})
     return jsonify(response.serialize())
 
 

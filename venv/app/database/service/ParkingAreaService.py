@@ -22,7 +22,7 @@ def getParkingArea(id):
 
 def getNextParkingArea():
     #TODO: Implement logic to determine next parking area
-    return getParkingArea('hd_0')
+    return getParkingArea('hd_0').serialize()
 
 
 
