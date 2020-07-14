@@ -86,3 +86,14 @@ def resetParcelState():
         parcel.state = 0
     db.session.commit()
 
+
+def resetParcelStateById(courier_id):
+    delivery_list = db.session.query(Delivery).filter(Delivery.courier_id == courier_id).all()
+    result_list = []
+    for delivery in delivery_list:
+        parcel = getParcel(delivery.parcel_id)
+        if parcel != None:
+            parcel.state = 0
+
+    db.session.commit()
+

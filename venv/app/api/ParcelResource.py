@@ -114,3 +114,11 @@ def resetParcel():
     return "reset successful"
 
 
+@app.route('/parcel/resetByID', methods=['GET'])
+def resetParcelById():
+    courierId = request.headers.get('courier_id')
+    ParcelService.resetParcelStateById(courierId)
+    CourierService.updateVerificationTokenById(courierId)
+    return "reset for courier with id " + str(courierId) + " was successfull!"
+
+

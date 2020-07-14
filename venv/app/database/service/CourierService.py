@@ -78,6 +78,13 @@ def updateAllVerificationToken():
     db.session.commit()
 
 
+def updateVerificationTokenById(courier_id):
+    courier_list = db.session.query(Courier).filter(Courier.id == courier_id).all()
+    for courier in courier_list:
+        courier.verification_token = str(uuid.uuid4())
+    db.session.commit()
+
+
 """Enables Ambient Intelligence Mode"""
 def enableAmbientIntelligenceMode(courier_id):
     courier = getCourierById(courier_id)
