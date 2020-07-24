@@ -2,7 +2,7 @@ from app.database.entity.ParcelEntity import Parcel
 from app.database.entity.DeliveryEntity import Delivery
 from app.database.entity.CourierEntity import Courier
 from app.database.service import CourierService
-from app.sql_alchemy_conf  import db
+from app.config.sql_alchemy_conf  import db
 from sqlalchemy import update
 from app.config.ParcelStatus import ParcelStatus
 import uuid

@@ -7,6 +7,8 @@ from app.config.firebase import FirebaseCloudMessaging
 from app.config.firebase.FirebaseCloudMessaging import CloudMessage
 from app.sumo.traci.ParkingArea import ParkingArea
 import gc
+from app.vehicle_simulation_service.simulation_service import simulation_service
+from app.config.vehicle_simulation import vehicle_simulation_config
 
 import time
 
@@ -42,6 +44,7 @@ class TraciServer:
     current_van_lat_geo = 0.0
     current_van_long_geo = 0.0
     vehicle_status = 0
+    sim_service = None
 
 
     """SUMP Paths are configures here"""
@@ -49,6 +52,9 @@ class TraciServer:
         self.accessPath =  os.path.dirname(os.path.realpath(__file__)) + "/config/" + file
         return self.accessPath
 
+
+    def __init__(self):
+        sim_service = simulation_service(vehicle_simulation_config.SERVER_IP, vehicle_simulation_config.SERVER_PORT)
 
     """Constructor"""
     def __new__(cls):
@@ -411,6 +417,8 @@ class TraciServer:
                 """Sends a notification to the app when the van has arrived in its paking position"""
                 if(self.parkingArrived and self.rerouteStarted):
                     FirebaseCloudMessaging.sendMessage(fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
+                    current_target = self.get_current_target_position()
+                    self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
                     TraciHandler.driveToNextParkingAreaWasCalled = False
                     self.rerouteStarted = False
 

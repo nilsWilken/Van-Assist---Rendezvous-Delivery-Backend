@@ -1,5 +1,5 @@
 from app.database.entity.ParkingAreaEntity import ParkingArea
-from app.sql_alchemy_conf import db
+from app.config.sql_alchemy_conf import db
 from sqlalchemy import update
 
 

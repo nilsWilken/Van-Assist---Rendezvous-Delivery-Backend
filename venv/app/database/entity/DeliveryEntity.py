@@ -1,6 +1,6 @@
 from flask import jsonify
 from app.database.entity.ParcelEntity import Parcel
-from app.sql_alchemy_conf import *
+from app.config.sql_alchemy_conf import *
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import ForeignKey
 import time

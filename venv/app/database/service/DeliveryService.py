@@ -5,7 +5,7 @@ from app.database.service import CourierService
 from app.database.service import ParcelService
 from sqlalchemy import update
 from app.config.ParcelStatus import ParcelStatus
-from app.sql_alchemy_conf  import db
+from app.config.sql_alchemy_conf  import db
 import uuid
 
 """Fetches Delivery Information by ParcelId"""

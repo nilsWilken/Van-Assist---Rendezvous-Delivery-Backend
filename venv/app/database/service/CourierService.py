@@ -1,8 +1,8 @@
 from app.database.entity.CourierEntity import Courier
-from app.config.DarkMode import DarkMode
-from app.config.HelpMode import HelpMode
-from app.config.AmbientIntelligenceMode import AmbientIntelligenceMode, IntelligentDrivingMode, TimeBasedDarkMode, SizeDependentWaitingMode, GamificationMode, DynamicContentMode
-from app.sql_alchemy_conf  import db
+from app.config.app.DarkMode import DarkMode
+from app.config.app.HelpMode import HelpMode
+from app.config.app.AmbientIntelligenceMode import AmbientIntelligenceMode, IntelligentDrivingMode, TimeBasedDarkMode, SizeDependentWaitingMode, GamificationMode, DynamicContentMode
+from app.config.sql_alchemy_conf  import db
 import uuid
 
 

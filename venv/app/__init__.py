@@ -1,8 +1,10 @@
 from flask import Flask
 import time, os, sys
-from app.sql_alchemy_conf import db
+#from app.sql_alchemy_conf import db
 from app.sumo.traci import TraciHandler
 from app.sumo.traci.TraciServer import TraciServer
+from app.config import sql_alchemy_conf
+from app.vehicle_simulation_service.vehicle_simulation_thread import vehicle_simulation_thread
 
 print('/> STARTING_FLASK')
 app = Flask(__name__)
@@ -37,6 +39,10 @@ traciServer = TraciServer()
 traciServer.loadParkingAreas()
 TraciHandler.parkingAreasAreLoading = False
 print('PARKING AREAS LOADED')
+
+
+sim_thread = vehicle_simulation_thread()
+sim_thread.start()
 
 
 

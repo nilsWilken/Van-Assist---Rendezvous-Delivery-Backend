@@ -1,4 +1,5 @@
 import threading
+import json
 
 try:
     import queue
@@ -18,6 +19,8 @@ import uuid
 
 from app.sumo.traci import TraciHandler
 from app.sumo.traci.TraciServer import TraciServer
+
+from app.config.vehicle_simulation import vehicle_simulation_config
 
 traciServer = TraciServer()
 
@@ -39,7 +42,7 @@ def setNextparkingLocation():
         return jsonify(response.serialize())
 
 
-@app.route('/api/v1/fleet/vehicle/drivetopos', methods=['POST'])
+@app.route('/api/v1/fleet/vehicle/drivetopos', methods=['PUT'])
 def setDriveTopPos():
     TraciHandler.driveToNextParkingAreaWasCalled = True
     newVehicleParkingLat = request.json['destination']['lat']
@@ -72,14 +75,14 @@ def get_current_target_position():
     return jsonify(response.serialize())
 
 
-@app.route('/api/v1/fleet/vehicle/status', methods=['GET', 'POST'])
+@app.route('/api/v1/fleet/vehicle/status', methods=['GET', 'PUT'])
 def handle_status():
     if request.method == "GET":
         current_vehicle_status = traciServer.get_vehicle_status()
         response = Response(HttpStatus.OK, "", {"status": current_vehicle_status})
         return jsonify(response.serialize())
 
-    elif request.method == "POST":
+    elif request.method == "PUT":
         vehicle_status = request.json["status"]
         traciServer.set_vehicle_status(vehicle_status)
 
@@ -100,6 +103,27 @@ def getAllParkingAreas():
         response = Response(HttpStatus.OK, "", result)
         return jsonify(response.serialize())
 
+
+""" ROUTES FOR TESTING PURPOSES """
+@app.route('/api/v1/fleet/vehicle/exampleID/currpos', methods=['PUT'])
+def test_currpos():
+    print("RECEIVED CURRENT POS: " + str(json.loads(request.data)))
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/exampleID/currtargetpos', methods=['PUT'])
+def test_currtargetpos():
+    print("RECEIVED CURRENT TARGET POS: " + str(json.loads(request.data)))
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/exampleID/status', methods=['PUT'])
+def test_status():
+    print("RECEIVED CURRENT STATUS: " + str(json.loads(request.data)))
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
 
 """Posts the new parking area to traci"""
 def setNewParkingPos(paID, edge):

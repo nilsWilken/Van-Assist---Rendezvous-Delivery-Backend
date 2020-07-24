@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.sql_alchemy_conf import *
+from app.config.sql_alchemy_conf import *
 import time
 import json
 
