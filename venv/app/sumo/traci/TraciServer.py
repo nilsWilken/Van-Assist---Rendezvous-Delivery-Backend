@@ -13,6 +13,8 @@ import time
 
 class TraciServer:
 
+    VEHICLE_STATES = ["IDLE", "AUTO_DRIVING", "MAN_DRIVING", "PARKING", "WAITING", "DOORSOPEN", "INTERVENTION", "HARD_FAULT"]
+
     __instance = None
     step = 0
     checkNewPark = False
@@ -37,6 +39,9 @@ class TraciServer:
     y_off = 0.0
     p1 = None
     p2 = None
+    current_van_lat_geo = 0.0
+    current_van_long_geo = 0.0
+    vehicle_status = 0
 
 
     """SUMP Paths are configures here"""
@@ -290,6 +295,42 @@ class TraciServer:
             print("An exception occurred")
         return returnPA
 
+    def setNewParkPosLatLon(self, lat, lon):
+        for pa in TraciHandler.parkingAreaList:
+            if pa["lat"] == lat and pa["lon"] == lon:
+                self.nextPaID = pa["id"]
+                paEdge = pa["edge"]
+                returnPA = pa
+                print(pa)
+                break
+        try:
+            if(TraciHandler.stopSimulation == False and self.step < 86400):
+                self.nextPaEdge = paEdge
+                self.checkNewPark = True
+        except:
+            print("An exception occured!")
+        return returnPA
+
+
+    def get_current_target_position(self):
+        for pa in TraciHandler.parkingAreaList:
+            if pa["id"] == self.nextPaID:
+                return pa
+
+    
+    def get_current_van_position(self):
+        return (self.current_van_lat_geo, self.current_van_long_geo)
+
+
+    def set_vehicle_status(self, status):
+        for x in range(0, len(self.VEHICLE_STATES)):
+            if self.VEHICLE_STATES[x] == status:
+                self.vehicle_status = x
+
+    
+    def get_vehicle_status(self):
+        return self.VEHICLE_STATES[self.vehicle_status]
+
 
     """--------------IMPORTANT---------------"""
     """This Method starts and manages the simulation"""
@@ -363,6 +404,8 @@ class TraciServer:
                 if self.step % 3 == 0:
                     van_lat_sumo, van_long_sumo  = traci.vehicle.getPosition(vehID='dpd_van')
                     (van_lat_geo, van_long_geo) = self.convertGEOfromXYWithoutConfiguration(van_lat_sumo, van_long_sumo)
+                    self.current_van_lat_geo = van_lat_geo
+                    self.current_van_long_geo = van_long_geo
                     FirebaseCloudMessaging.sendCurrentPosition(fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
 
                 """Sends a notification to the app when the van has arrived in its paking position"""

@@ -36,7 +36,17 @@ def setNextparkingLocation():
         newVehicleParkingEdge = request.json['parkingArea']['edge']
         paResponse = setNewParkingPos(newVehicleParkingPos, newVehicleParkingEdge)
         response = Response(HttpStatus.CREATED, "", paResponse)
-        return jsonify(response.serialize()) 
+        return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/drivetopos', methods=['POST'])
+def setDriveTopPos():
+    TraciHandler.driveToNextParkingAreaWasCalled = True
+    newVehicleParkingLat = request.json['destination']['lat']
+    newVehicleParkingLon = request.json['destination']['lon']
+    paResponse = setNewParkingPosLatLon(newVehicleParkingLat, newVehicleParkingLon)
+    response = Response(HttpStatus.CREATED, "", paResponse)
+    return jsonify(response.serialize())
 
 
 @app.route('/vehicle/parkingArea/getNext', methods=['GET'])
@@ -44,6 +54,34 @@ def getNextParkingArea():
     result = ParkingAreaService.getNextParkingArea()
     response = Response(HttpStatus.OK, "", {"next_parking_area": result})
     return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/currpos', methods=['GET'])
+def get_current_position():
+    (lat, lon) = traciServer.get_current_van_position()
+    result = {"lat": lat, "lon": lon}
+    response = Response(HttpStatus.OK, "", {"position": result})
+    return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/currtargetpos', methods=['GET'])
+def get_current_target_position():
+    current_target_position = traciServer.get_current_target_position()
+    result = {"lat": current_target_position["lat"], "lon": current_target_position["long"]}
+    response = Response(HttpStatus.OK, "", {"destination": result})
+    return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/status', methods=['GET', 'POST'])
+def handle_status():
+    if request.method == "GET":
+        current_vehicle_status = traciServer.get_vehicle_status()
+        response = Response(HttpStatus.OK, "", {"status": current_vehicle_status})
+        return jsonify(response.serialize())
+
+    elif request.method == "POST":
+        vehicle_status = request.json["status"]
+        traciServer.set_vehicle_status(vehicle_status)
 
 
 """ Header: uid, courier_id """
@@ -61,6 +99,7 @@ def getAllParkingAreas():
         TraciHandler.parkingAreasAreLoading=False
         response = Response(HttpStatus.OK, "", result)
         return jsonify(response.serialize())
+
 
 """Posts the new parking area to traci"""
 def setNewParkingPos(paID, edge):
