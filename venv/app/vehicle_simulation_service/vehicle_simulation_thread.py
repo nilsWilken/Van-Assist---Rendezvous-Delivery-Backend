@@ -16,6 +16,7 @@ class vehicle_simulation_thread(Thread):
 
 
     def run(self):
+        print("VEHICLE COMMUNICATION SIMULATION THREAD STARTED!")
         while not self.stop:
             (current_lat, current_lon) = self.traci_server.get_current_van_position()
             self.sim_service.send_current_position(vehicle_simulation_config.VEHICLE_ID, current_lat, current_lon)
@@ -30,6 +31,8 @@ class vehicle_simulation_thread(Thread):
             self.sim_service.send_current_vehicle_status(vehicle_simulation_config.VEHICLE_ID, status)
             
             time.sleep(vehicle_simulation_config.NOTIFY_INTERVAL)
+
+        print("VEHICLE COMMUNICATION SIMULATION THREAD STOPPED!")
             
 
     def request_stop(self):

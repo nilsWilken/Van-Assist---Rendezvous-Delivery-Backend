@@ -44,7 +44,7 @@ def confirmParcelDeliverySuccess():
             response = ResponseMessage.PARCEL_NOT_FOUND
         else:
             delivery = DeliveryService.getDeliveryByParcelId(parcel.id)
-            response = Response(HttpStatus.OK, HttpStatusMessage.OK, parcel.serialize(delivery.parcel_delivery_position))
+            response = Response(HttpStatus.OK, HttpStatusMessage.OK, parcel.serializeWithPosition(delivery.parcel_delivery_position))
         return jsonify(response.serialize())
 
 
@@ -63,7 +63,7 @@ def confirmParcelDeliveryFailure():
             response = ResponseMessage.PARCEL_NOT_FOUND
         else:
             delivery = DeliveryService.getDeliveryByParcelId(parcel.id)
-            response = Response(HttpStatus.OK, HttpStatusMessage.OK , parcel.serialize(delivery.parcel_delivery_position))
+            response = Response(HttpStatus.OK, HttpStatusMessage.OK , parcel.serializeWithPosition(delivery.parcel_delivery_position))
         return jsonify(response.serialize())
 
 
@@ -82,7 +82,7 @@ def undoParcelDeliveryConfirmation():
             response = ResponseMessage.PARCEL_NOT_FOUND
         else:
             delivery = DeliveryService.getDeliveryByParcelId(parcel.id)
-            response = Response(HttpStatus.OK, HttpStatusMessage.OK, parcel.serialize(delivery.parcel_delivery_position))
+            response = Response(HttpStatus.OK, HttpStatusMessage.OK, parcel.serializeWithPosition(delivery.parcel_delivery_position))
         return jsonify(response.serialize())
 
 

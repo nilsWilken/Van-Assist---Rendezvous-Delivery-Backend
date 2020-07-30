@@ -5,6 +5,7 @@ from app.sumo.traci import TraciHandler
 from app.sumo.traci.TraciServer import TraciServer
 from app.config import sql_alchemy_conf
 from app.vehicle_simulation_service.vehicle_simulation_thread import vehicle_simulation_thread
+from app.config.vehicle_simulation import vehicle_simulation_config
 
 print('/> STARTING_FLASK')
 app = Flask(__name__)
@@ -40,9 +41,9 @@ traciServer.loadParkingAreas()
 TraciHandler.parkingAreasAreLoading = False
 print('PARKING AREAS LOADED')
 
-
-sim_thread = vehicle_simulation_thread()
-sim_thread.start()
+if vehicle_simulation_config.START_COMM_SIMULATION_THREAD:
+    sim_thread = vehicle_simulation_thread()
+    sim_thread.start()
 
 
 
