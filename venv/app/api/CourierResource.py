@@ -60,6 +60,10 @@ def startDay():
         print("---------------------")
         print("Simulation is running")
         print("---------------------")
+
+        traciServer = TraciServer()
+        traciServer.update_fcm_token(request.headers.get('fcm_token'))
+        
         return jsonify(ResponseMessage.SIMULATION_IS_RUNNING.serialize())
     else:
         courier_id = request.headers.get('courier_id')

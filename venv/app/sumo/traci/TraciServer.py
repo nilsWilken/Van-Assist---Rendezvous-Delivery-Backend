@@ -41,10 +41,11 @@ class TraciServer:
     y_off = 0.0
     p1 = None
     p2 = None
-    current_van_lat_geo = 0.0
-    current_van_long_geo = 0.0
+    current_van_lat_geo = 49.416937
+    current_van_long_geo = 8.678421
     vehicle_status = 0
     sim_service = None
+    fcm_token = ""
 
 
     """SUMP Paths are configures here"""
@@ -54,7 +55,7 @@ class TraciServer:
 
 
     def __init__(self):
-        sim_service = simulation_service(vehicle_simulation_config.SERVER_IP, vehicle_simulation_config.SERVER_PORT)
+        self.sim_service = simulation_service(vehicle_simulation_config.SERVER_IP, vehicle_simulation_config.SERVER_PORT)
 
     """Constructor"""
     def __new__(cls):
@@ -338,10 +339,15 @@ class TraciServer:
         return self.VEHICLE_STATES[self.vehicle_status]
 
 
+    def update_fcm_token(self, fcm_token):
+        self.fcm_token = fcm_token
+
+
     """--------------IMPORTANT---------------"""
     """This Method starts and manages the simulation"""
     def start(self, seconds_since_midnight, fcm_token):
         self.configure()
+        self.fcm_token = fcm_token
         import traci
         import traci.constants as tc
         import sumolib
@@ -398,7 +404,7 @@ class TraciServer:
             """Nesessary because simulation is laggin at beginnin, just prints smooth after 1 step"""
             if self.step == seconds_since_midnight + 2:
                 TraciHandler.simulationIsRunning = True
-                FirebaseCloudMessaging.sendMessage(fcm_token, CloudMessage.SIMULATION_START)
+                FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_START)
 
             print(str(self.step))
             if (self.step > seconds_since_midnight + 2) and TraciHandler.driveToNextParkingAreaWasCalled:
@@ -409,14 +415,14 @@ class TraciServer:
                 """Updates the van location every 3 seconds"""
                 if self.step % 3 == 0:
                     van_lat_sumo, van_long_sumo  = traci.vehicle.getPosition(vehID='dpd_van')
-                    (van_lat_geo, van_long_geo) = self.convertGEOfromXYWithoutConfiguration(van_lat_sumo, van_long_sumo)
+                    (van_long_geo, van_lat_geo) = self.convertGEOfromXYWithoutConfiguration(van_lat_sumo, van_long_sumo)
                     self.current_van_lat_geo = van_lat_geo
                     self.current_van_long_geo = van_long_geo
-                    FirebaseCloudMessaging.sendCurrentPosition(fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
+                    FirebaseCloudMessaging.sendCurrentPosition(self.fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
 
                 """Sends a notification to the app when the van has arrived in its paking position"""
                 if(self.parkingArrived and self.rerouteStarted):
-                    FirebaseCloudMessaging.sendMessage(fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
+                    FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
                     current_target = self.get_current_target_position()
                     self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
                     TraciHandler.driveToNextParkingAreaWasCalled = False
@@ -437,7 +443,7 @@ class TraciServer:
 
         print("Stopping the TraCI server...")
         traci.close()
-        FirebaseCloudMessaging.sendMessage(fcm_token, CloudMessage.SIMULATION_STOP)
+        FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_STOP)
         print("TraCI server stopped")
         TraciHandler.simulationIsRunning = False
         TraciHandler.startSimulationWasCalledFirst = False
