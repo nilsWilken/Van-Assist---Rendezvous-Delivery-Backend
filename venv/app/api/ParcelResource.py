@@ -111,7 +111,8 @@ def updateParcelOrder():
 def resetParcel():
     ParcelService.resetParcelState()
     CourierService.updateAllVerificationToken()
-    return "reset successful"
+    response = Response(HttpStatus.OK, "Reset successful!", None)
+    return jsonify(response.serialize())
 
 
 @app.route('/parcel/resetByID', methods=['GET'])
@@ -119,6 +120,7 @@ def resetParcelById():
     courierId = request.headers.get('courier_id')
     ParcelService.resetParcelStateById(courierId)
     CourierService.updateVerificationTokenById(courierId)
-    return "reset for courier with id " + str(courierId) + " was successfull!"
+    response = Response(HttpStatus.OK, "Reset for courier with id " + str(courierId) + " was successfull!", None)
+    return jsonify(response.serialize())
 
 

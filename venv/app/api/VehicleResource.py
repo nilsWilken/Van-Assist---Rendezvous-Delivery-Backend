@@ -45,8 +45,10 @@ def setNextparkingLocation():
 @app.route('/api/v1/fleet/vehicle/drivetopos', methods=['PUT'])
 def setDriveTopPos():
     TraciHandler.driveToNextParkingAreaWasCalled = True
-    newVehicleParkingLat = request.json['destination']['lat']
-    newVehicleParkingLon = request.json['destination']['lon']
+    print(request.data)
+    json_content = json.loads(request.data)
+    newVehicleParkingLat = json_content['destination']['lat']
+    newVehicleParkingLon = json_content['destination']['lon']
     paResponse = setNewParkingPosLatLon(newVehicleParkingLat, newVehicleParkingLon)
     response = Response(HttpStatus.CREATED, "", paResponse)
     return jsonify(response.serialize())
@@ -128,5 +130,10 @@ def test_status():
 """Posts the new parking area to traci"""
 def setNewParkingPos(paID, edge):
     result = traciServer.setNewParkPos(paID, edge)
+    return result
+
+
+def setNewParkingPosLatLon(latitude, longitude):
+    result = traciServer.setNewParkingPosLatLon(latitude, longitude)
     return result
 

@@ -1,5 +1,6 @@
 import os, sys
 import time
+import math
 from geo.sphere import bearing, destination
 from lxml import etree          # used for parsing XML Files
 from app.sumo.traci import TraciHandler
@@ -247,8 +248,9 @@ class TraciServer:
         full = {} # initialize dict
         paid = self.retrieve_parking_areas() #get list of all parkingAreas IDs
         for pa in paid:
-            capacity = traci.simulation.getParameter(pa, "parkingArea.capacity")
-            occupancy = traci.simulation.getParameter(pa, "parkingArea.occupancy")
+            if TraciHandler.simulationIsRunning:
+                capacity = traci.simulation.getParameter(pa, "parkingArea.capacity")
+                occupancy = traci.simulation.getParameter(pa, "parkingArea.occupancy")
             diff = int(capacity) - int(occupancy)
             if diff == 0:  # full == True
                 full[pa] = True
@@ -302,14 +304,19 @@ class TraciServer:
             print("An exception occurred")
         return returnPA
 
-    def setNewParkPosLatLon(self, lat, lon):
-        for pa in TraciHandler.parkingAreaList:
-            if pa["lat"] == lat and pa["lon"] == lon:
-                self.nextPaID = pa["id"]
-                paEdge = pa["edge"]
-                returnPA = pa
-                print(pa)
-                break
+    def setNewParkingPosLatLon(self, lat, lon):
+        #print(len(TraciHandler.parkingAreaList))
+        #for pa in TraciHandler.parkingAreaList:
+        #    print(str(pa["lat"]) + " " + str(pa["long"]))
+        #    if pa["lat"] == lat and pa["long"] == lon:
+        #        self.nextPaID = pa["id"]
+        #        paEdge = pa["edge"]
+        #        returnPA = pa
+        #        print(pa)
+        #        break
+        returnPA = self.get_closest_parking_area(lat, lon)
+        self.nextPaID = returnPA["id"]
+        paEdge = returnPA["edge"]
         try:
             if(TraciHandler.stopSimulation == False and self.step < 86400):
                 self.nextPaEdge = paEdge
@@ -342,6 +349,23 @@ class TraciServer:
     def update_fcm_token(self, fcm_token):
         self.fcm_token = fcm_token
 
+
+    def get_closest_parking_area(self, lat, lon):
+        x = (lat, lon)
+        distances = {}
+        for x in range(0, len(TraciHandler.parkingAreaList)):
+            pa = TraciHandler.parkingAreaList[x]
+            distance = self.get_euclidean_distance(lat, pa["lat"], lon, pa["long"])
+            distances[x] = distance
+        min_x = min(distances, key=distances.get)
+
+        return TraciHandler.parkingAreaList[min_x]
+
+    def get_euclidean_distance(self, x1, x2, y1, y2):
+        x = (x1-x2)**2
+        y = (y1-y2)**2
+        return math.sqrt(x+y)
+        
 
     """--------------IMPORTANT---------------"""
     """This Method starts and manages the simulation"""
