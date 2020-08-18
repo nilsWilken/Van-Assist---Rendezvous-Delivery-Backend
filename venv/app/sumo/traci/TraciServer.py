@@ -428,6 +428,7 @@ class TraciServer:
             """Nesessary because simulation is laggin at beginnin, just prints smooth after 1 step"""
             if self.step == seconds_since_midnight + 2:
                 TraciHandler.simulationIsRunning = True
+                self.set_vehicle_status("PARKING")
                 if self.fcm_token != "" and self.fcm_token != None:
                     FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_START)
 
@@ -435,6 +436,7 @@ class TraciServer:
             if (self.step > seconds_since_midnight + 2) and TraciHandler.driveToNextParkingAreaWasCalled:
                 print("Is stopped parking?")
                 print(traci.vehicle.isStoppedParking(vehID='dpd_van'))
+                self.set_vehicle_status("AUTO_DRIVING")
                 self.parkingArrived = traci.vehicle.isStoppedParking(vehID='dpd_van')
 
                 """Updates the van location every 3 seconds"""
@@ -452,6 +454,7 @@ class TraciServer:
                         FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
                     current_target = self.get_current_target_position()
                     self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
+                    self.set_vehicle_status("PARKING")
                     TraciHandler.driveToNextParkingAreaWasCalled = False
                     self.rerouteStarted = False
 
