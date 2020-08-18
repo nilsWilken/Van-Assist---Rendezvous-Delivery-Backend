@@ -428,7 +428,8 @@ class TraciServer:
             """Nesessary because simulation is laggin at beginnin, just prints smooth after 1 step"""
             if self.step == seconds_since_midnight + 2:
                 TraciHandler.simulationIsRunning = True
-                FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_START)
+                if self.fcm_token != "" and self.fcm_token != None:
+                    FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_START)
 
             print(str(self.step))
             if (self.step > seconds_since_midnight + 2) and TraciHandler.driveToNextParkingAreaWasCalled:
@@ -442,11 +443,13 @@ class TraciServer:
                     (van_long_geo, van_lat_geo) = self.convertGEOfromXYWithoutConfiguration(van_lat_sumo, van_long_sumo)
                     self.current_van_lat_geo = van_lat_geo
                     self.current_van_long_geo = van_long_geo
-                    FirebaseCloudMessaging.sendCurrentPosition(self.fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
+                    if self.fcm_token != "" and self.fcm_token != None:
+                        FirebaseCloudMessaging.sendCurrentPosition(self.fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
 
                 """Sends a notification to the app when the van has arrived in its paking position"""
                 if(self.parkingArrived and self.rerouteStarted):
-                    FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
+                    if self.fcm_token != "" and self.fcm_token != None:
+                        FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
                     current_target = self.get_current_target_position()
                     self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
                     TraciHandler.driveToNextParkingAreaWasCalled = False
@@ -467,7 +470,8 @@ class TraciServer:
 
         print("Stopping the TraCI server...")
         traci.close()
-        FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_STOP)
+        if self.fcm_token != "" and self.fcm_token != None:
+            FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_STOP)
         print("TraCI server stopped")
         TraciHandler.simulationIsRunning = False
         TraciHandler.startSimulationWasCalledFirst = False

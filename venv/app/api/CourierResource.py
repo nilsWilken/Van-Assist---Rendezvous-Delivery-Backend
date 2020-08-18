@@ -6,6 +6,7 @@ from app.database.service import CourierService
 from app.sumo.traci.TraciServer import TraciServer
 from app.config.firebase import Authentication
 from app.sumo.traci import TraciHandler
+from app.sumo.traci.TraciStarterThread import TraciStarterThread
 import firebase_admin
 from firebase_admin import messaging
 from firebase_admin import _messaging_utils
@@ -47,7 +48,9 @@ def changeLanguage():
 
 def startTraci(seconds_since_midnight, fcm_token):
     traciServer = TraciServer()
-    traciServer.start(seconds_since_midnight, fcm_token)
+    #traciServer.start(seconds_since_midnight, fcm_token)
+    traciStarter = TraciStarterThread(seconds_since_midnight, fcm_token)
+    traciStarter.start()
     
 
 """" Header: uid, courier_id, start_time_in_seconds """
@@ -73,6 +76,7 @@ def startDay():
         seconds_since_midnight = request.headers.get('seconds_since_midnight')
         TraciHandler.startSimulationWasCalledFirst=True
         startTraci(float(seconds_since_midnight), fcm_token)
+        print("Traci started!")
         return jsonify(ResponseMessage.OK.serialize())
     return jsonify(ResponseMessage.NOT_FOUND.serialize())
 
