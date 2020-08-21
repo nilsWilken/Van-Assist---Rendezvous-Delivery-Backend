@@ -72,7 +72,10 @@ def get_current_position():
 @app.route('/api/v1/fleet/vehicle/currtargetpos', methods=['GET'])
 def get_current_target_position():
     current_target_position = traciServer.get_current_target_position()
-    result = {"lat": current_target_position["lat"], "lon": current_target_position["long"]}
+    if current_target_position != None:
+        result = {"lat": current_target_position["lat"], "lon": current_target_position["long"]}
+    else:
+        result = {"lat": 0.0, "lon": 0.0}
     response = Response(HttpStatus.OK, "", {"destination": result})
     return jsonify(response.serialize())
 

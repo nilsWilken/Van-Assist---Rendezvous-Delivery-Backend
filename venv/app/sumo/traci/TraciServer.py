@@ -330,6 +330,7 @@ class TraciServer:
         for pa in TraciHandler.parkingAreaList:
             if pa["id"] == self.nextPaID:
                 return pa
+        return None
 
     
     def get_current_van_position(self):
@@ -458,13 +459,14 @@ class TraciServer:
                     TraciHandler.driveToNextParkingAreaWasCalled = False
                     self.rerouteStarted = False
 
-            if self.checkNewPark == True :
+            if self.checkNewPark == True:
                 traci.vehicle.changeTarget(vehID='dpd_van', edgeID=self.nextPaEdge)
-                traci.vehicle.resume('dpd_van')
-                traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID=self.nextPaID, until=86400.0, flags=65)
-                print("Parking triggered")
-                self.checkNewPark = False
-                self.rerouteStarted = True
+                if traci.vehicle.isStopped('dpd_van'):
+                    traci.vehicle.resume('dpd_van')
+                    traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID=self.nextPaID, until=86400.0, flags=65)
+                    print("Parking triggered")
+                    self.checkNewPark = False
+                    self.rerouteStarted = True
 
             time.sleep(1.0 - ((time.time() - starttime) % 1.0))
             self.step += 1
@@ -472,6 +474,8 @@ class TraciServer:
 
 
         print("Stopping the TraCI server...")
+        self.nextPaID = ""
+        self.nextPaEdge = ""
         traci.close()
         if self.fcm_token != "" and self.fcm_token != None:
             FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_STOP)
