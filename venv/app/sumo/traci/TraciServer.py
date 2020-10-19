@@ -476,6 +476,8 @@ class TraciServer:
         print("Stopping the TraCI server...")
         self.nextPaID = ""
         self.nextPaEdge = ""
+        self.checkNewPark = False
+        TraciHandler.driveToNextParkingAreaWasCalled = False
         traci.close()
         if self.fcm_token != "" and self.fcm_token != None:
             FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.SIMULATION_STOP)

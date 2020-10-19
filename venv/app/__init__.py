@@ -24,7 +24,7 @@ default_app = firebase_admin.initialize_app(cred)
 #dbconnection = 'mysql://root:@localhost:3306/vanassist'
 #dbconnection = 'mysql://admin:vanassist@127.0.0.1:3306/vanassist'
 #dbconnection = 'mysql://admin:vanassist@134.155.108.94:3306/vanassist'
-dbconnection = 'mysql://admin:vanassist@134.155.108.132:3306/vanassist'
+dbconnection = 'mysql://admin:vanassist@134.155.109.10:3306/vanassist'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = dbconnection
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

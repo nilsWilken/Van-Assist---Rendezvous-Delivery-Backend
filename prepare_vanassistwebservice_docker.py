@@ -24,7 +24,7 @@ if vanassistubuntu_found == False:
 
 client.images.build(path=".", tag="vanassistwebservice:1.0", rm="true")
 
-client.containers.run(image="vanassistwebservice:1.0", ports={"8000/tcp":"8000"}, detach="false", mem_limit="7g", memswap_limit="10g")
+client.containers.run(image="vanassistwebservice:1.0", ports={"8000/tcp":"8000"}, detach="false", mem_limit="6g")
 
 images = client.images.list()
 for img in images:
