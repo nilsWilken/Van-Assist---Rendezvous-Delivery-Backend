@@ -382,31 +382,33 @@ class TraciServer:
         self.sumoBinary = os.environ['SUMO_HOME'] + "/bin/sumo"
         self.sumoCmd = [sumoBinary, "-c", os.path.dirname(os.path.realpath(__file__)) + "/config/ourSumoConfig.sumocfg", "--no-step-log", "true","--no-warnings","true" ,"--step-length", "1.0"] #, "--default.action-step-length", "2.0"]
 
-        if seconds_since_midnight > 24000:
-            print("Rewriting the Routes File for faster Loading")
-            self.routesPath = self.configurePath("activitygen_vanassist.rou.xml")
-            self.routesEtree = etree.parse(self.routesPath)
+        print("Rewriting the Routes File for faster Loading")
+        self.routesPath = self.configurePath("activitygen_vanassist.rou.xml")
+        self.routesEtree = etree.parse(self.routesPath)
 
+        if seconds_since_midnight > 24000:
             for ele in self.routesEtree.xpath("//vehicle[@depart < '" + str(seconds_since_midnight) + "']"):
                 ele.getparent().remove(ele)  # here I grab the parent of the element to call the remove directly on it
 
-            try:
-                file_path = self.configurePath("activitygen_vanassist_26.rou.xml")
-                exists = os.path.isfile(file_path)
-                print(exists)
-                if exists:
-                # delete file
-                    os.remove(file_path)
-                    print("success")
-            except:
-                print("unhandled file exception")
+        try:
+            file_path = self.configurePath("activitygen_vanassist_26.rou.xml")
+            exists = os.path.isfile(file_path)
+            print(exists)
+            if exists:
+            # delete file
+                os.remove(file_path)
+                print("success")
+        except:
+            print("unhandled file exception")
 
-            new_path = self.configurePath("activitygen_vanassist_26.rou.xml")
-            self.routesEtree.write(new_path)
+        new_path = self.configurePath("activitygen_vanassist_26.rou.xml")
+        self.routesEtree.write(new_path)
 
         exists = os.path.isfile(file_path)
         while(exists == False):
             """wait"""
+            time.sleep(1)
+            exists = os.path.isfile(file_path)
         print("Starting the TraCI server...")
         traci.start(self.sumoCmd)
         TraciHandler.step = 0
