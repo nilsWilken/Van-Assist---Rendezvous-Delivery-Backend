@@ -1,10 +1,12 @@
 import http.client
+import ssl
 import json
 
 class connection:
 
     server_ip = None
     port = None
+    https = False
 
     def __init__(self, server_ip, port):
         self.server_ip = server_ip
@@ -12,7 +14,12 @@ class connection:
 
 
     def connect_to_server(self):
-        return http.client.HTTPConnection(self.server_ip, self.port)
+        if self.https:
+            ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            ssl_context.load_cert_chain("./certificate/hso_pem_cert.pem", "./certificate/test.key")
+            return http.client.HTTPSConnection(self.server_ip, port=self.port, context=ssl_context)
+        else: 
+            return http.client.HTTPConnection(self.server_ip, self.port)
 
 
     def send_request_to_server(self, method, path, t_body=None, t_header=None):
