@@ -7,6 +7,7 @@ from app.sumo.traci.TraciServer import TraciServer
 from app.config.firebase import Authentication
 from app.sumo.traci import TraciHandler
 from app.sumo.traci.TraciStarterThread import TraciStarterThread
+from app.config.firebase.FirebaseCloudMessaging import CloudMessage
 import firebase_admin
 from firebase_admin import messaging
 from firebase_admin import _messaging_utils
@@ -340,3 +341,18 @@ def disableDynamicContentMode():
         if courier != None:
             return jsonify(Response(HttpStatus.OK, HttpStatusMessage.OK, courier.serialize()).serialize())
         return jsonify(ResponseMessage.NOT_FOUND.serialize())
+
+@app.route('/courier/updateFCMToken', methods=['PUT'])
+def update_fcm_token():
+    print("UPDATE FCM TOKEN CALLED!")
+    courier_validation_response = Authentication.checkUserAuthentication(request)
+    print(courier_validation_response)
+    if courier_validation_response.status != HttpStatus.OK:
+        return jsonify(courier_validation_response.serialize())
+    else:
+        courierId = request.headers.get('courier_id')
+        fcm_token = request.headers.get('fcm_token')
+        print("fcm_token: ", fcm_token)
+        CloudMessage.FCM_TOKEN = fcm_token
+        return jsonify(ResponseMessage.OK.serialize())
+

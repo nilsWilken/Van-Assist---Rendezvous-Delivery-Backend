@@ -1,5 +1,7 @@
 import threading
 import json
+from app.config.firebase import FirebaseCloudMessaging
+from app.config.firebase.FirebaseCloudMessaging import CloudMessage
 
 try:
     import queue
@@ -129,6 +131,17 @@ def test_status():
     print("RECEIVED CURRENT STATUS: " + str(json.loads(request.data)))
     response = Response(HttpStatus.OK, "", None)
     return jsonify(response.serialize())
+
+@app.route('/api/v1/fleet/vehicle/exampleID/sendProblem', methods=['PUT'])
+def test_send_problem():
+    json_content = json.loads(request.data)
+    problem_message = json_content['problem_message']
+    (lat, lon) = traciServer.get_current_van_position()
+    FirebaseCloudMessaging.sendVanProblem(CloudMessage.VAN_PROBLEM, problem_message, "", "")
+    
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
+
 
 """Posts the new parking area to traci"""
 def setNewParkingPos(paID, edge):
