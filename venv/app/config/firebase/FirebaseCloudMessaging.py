@@ -66,6 +66,23 @@ def sendVanLogisticStatus(name, logistic_status):
     response = messaging.send(message)
     print('Successfull send message:', response)
 
+def sendVanState(name, latitude, longitude, is_parking, door_status, logistic_status, problem_status, problem_message):
+    message = messaging.Message(
+        data={
+            'name': name,
+            'latitude': latitude,
+            'longitude': longitude,
+            'is_parking': is_parking,
+            'door_status': door_status,
+            'logistic_status': logistic_status,
+            'problem_status': problem_status,
+            'problem_message': problem_message
+        },
+        token=CloudMessage.FCM_TOKEN
+    )
+    response = messaging.send(message)
+    print('Successfull send message:', response)
+
 
 """Predefined cloud messages which are then cached by the mobile app"""
 class CloudMessage:

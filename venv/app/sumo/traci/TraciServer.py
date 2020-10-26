@@ -47,6 +47,9 @@ class TraciServer:
     vehicle_status = 0
     sim_service = None
     fcm_token = ""
+    door_status = "CLOSED"
+    problem_status = "OK"
+    problem_message = ""
 
 
     """SUMP Paths are configures here"""
@@ -346,6 +349,20 @@ class TraciServer:
     def get_vehicle_status(self):
         return self.VEHICLE_STATES[self.vehicle_status]
 
+    def get_vehicle_door_status(self):
+        return self.door_status
+
+    def get_vehicle_problem_status(self):
+        return self.problem_status
+
+    def set_vehicle_problem_status(self, problem_status):
+        self.problem_status = problem_status
+
+    def get_vehicle_problem_message(self):
+        return self.problem_message
+
+    def set_vehicle_problem_message(self, problem_message):
+        self.problem_message = problem_message
 
     def update_fcm_token(self, fcm_token):
         self.fcm_token = fcm_token

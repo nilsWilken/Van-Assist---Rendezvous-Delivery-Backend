@@ -63,6 +63,25 @@ def getNextParkingArea():
     return jsonify(response.serialize())
 
 
+@app.route('/api/v1/fleet/vehicle/getCurrentState', methods=['GET'])
+def get_current_vehicle_state():
+    (lat, lon) = traciServer.get_current_van_position()
+    is_parking = TraciHandler.driveToNextParkingAreaWasCalled
+    door_status = traciServer.get_vehicle_door_status()
+    logistic_status = traciServer.get_vehicle_status()
+    problem_status = traciServer.get_vehicle_problem_status()
+    problem_message = traciServer.get_vehicle_problem_message()
+
+    result = {"latitude": lat, "longitude": lon, "is_parking": is_parking,
+                "door_status": door_status, "logistic_status": logistic_status,
+                "problem_status": problem_status, "problem_message": problem_message}
+
+    response = Response(HttpStatus.OK, "", result)
+    return jsonify(response.serialize())
+
+
+
+
 @app.route('/api/v1/fleet/vehicle/currpos', methods=['GET'])
 def get_current_position():
     (lat, lon) = traciServer.get_current_van_position()
@@ -134,11 +153,26 @@ def test_status():
 
 @app.route('/api/v1/fleet/vehicle/exampleID/sendProblem', methods=['PUT'])
 def test_send_problem():
+    traciServer = TraciServer()
     json_content = json.loads(request.data)
     problem_message = json_content['problem_message']
     (lat, lon) = traciServer.get_current_van_position()
-    FirebaseCloudMessaging.sendVanProblem(CloudMessage.VAN_PROBLEM, problem_message, "", "")
+    FirebaseCloudMessaging.sendVanProblem(CloudMessage.VAN_PROBLEM, problem_message, str(lat), str(lon))
+
+    traciServer = TraciServer()
+    traciServer.set_vehicle_problem_status("PROBLEM")
+    traciServer.set_vehicle_problem_message(problem_message)
     
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
+
+
+@app.route('/api/v1/fleet/vehicle/exampleID/currentProblemSolved', methods=['PUT'])
+def test_current_problem_solved():
+    traciServer = TraciServer()
+    traciServer.set_vehicle_problem_message("")
+    traciServer.set_vehicle_problem_status("OK")
+
     response = Response(HttpStatus.OK, "", None)
     return jsonify(response.serialize())
 
