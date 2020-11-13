@@ -352,6 +352,9 @@ class TraciServer:
     def get_vehicle_door_status(self):
         return self.door_status
 
+    def set_vehicle_door_status(self, door_status):
+        self.door_status = door_status
+
     def get_vehicle_problem_status(self):
         return self.problem_status
 

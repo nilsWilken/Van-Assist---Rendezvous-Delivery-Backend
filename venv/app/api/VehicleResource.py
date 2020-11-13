@@ -101,6 +101,18 @@ def get_current_target_position():
     return jsonify(response.serialize())
 
 
+@app.route('/api/v1/fleet/vehicle/setDoorStatus', methods=['PUT'])
+def set_vehicle_door_status():
+    json_content = json.loads(request.data)
+    door_status = json_content['door_status']
+
+    traciServer = TraciServer()
+    traciServer.set_vehicle_door_status(door_status)
+
+    response = Response(HttpStatus.OK, "", None)
+    return jsonify(response.serialize())
+
+
 @app.route('/api/v1/fleet/vehicle/status', methods=['GET', 'PUT'])
 def handle_status():
     if request.method == "GET":
@@ -111,6 +123,8 @@ def handle_status():
     elif request.method == "PUT":
         vehicle_status = request.json["status"]
         traciServer.set_vehicle_status(vehicle_status)
+        response = Response(HttpStatus.OK, "", None)
+        return jsonify(response.serialize())
 
 
 """ Header: uid, courier_id """
