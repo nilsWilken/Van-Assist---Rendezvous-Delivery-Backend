@@ -488,12 +488,12 @@ class TraciServer:
 
             if self.checkNewPark == True:
                 traci.vehicle.changeTarget(vehID='dpd_van', edgeID=self.nextPaEdge)
+                traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID=self.nextPaID, until=86400.0, flags=65)
                 if traci.vehicle.isStopped('dpd_van'):
                     traci.vehicle.resume('dpd_van')
-                    traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID=self.nextPaID, until=86400.0, flags=65)
                     print("Parking triggered")
-                    self.checkNewPark = False
-                    self.rerouteStarted = True
+                self.rerouteStarted = True
+                self.checkNewPark = False
 
             time.sleep(1.0 - ((time.time() - starttime) % 1.0))
             self.step += 1
