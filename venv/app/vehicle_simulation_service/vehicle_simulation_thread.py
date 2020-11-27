@@ -17,19 +17,28 @@ class vehicle_simulation_thread(Thread):
 
     def run(self):
         print("VEHICLE COMMUNICATION SIMULATION THREAD STARTED!")
+
+        #AUTHENTICATE WITH SERVER
+        self.sim_service.authenticate()
+        print("SERVICE SUCCESSFULLY AUTHENTICATED!")
+
         while not self.stop:
+            #SEND CURRENT POSITION
             (current_lat, current_lon) = self.traci_server.get_current_van_position()
             self.sim_service.send_current_position(vehicle_simulation_config.VEHICLE_ID, current_lat, current_lon)
 
+            #SEND CURRENT TARGET POSITION
             current_target = self.traci_server.get_current_target_position()
             if current_target != None:
                 self.sim_service.send_current_target_position(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
             else:
                 self.sim_service.send_current_target_position(vehicle_simulation_config.VEHICLE_ID, 0.0, 0.0)
 
+            #SEND CURRENT VEHICLE STATUS
             status = self.traci_server.get_vehicle_status()
             self.sim_service.send_current_vehicle_status(vehicle_simulation_config.VEHICLE_ID, status)
             
+            #MAKE IT PERIODIC
             time.sleep(vehicle_simulation_config.NOTIFY_INTERVAL)
 
         print("VEHICLE COMMUNICATION SIMULATION THREAD STOPPED!")

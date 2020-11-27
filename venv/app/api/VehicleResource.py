@@ -80,8 +80,6 @@ def get_current_vehicle_state():
     return jsonify(response.serialize())
 
 
-
-
 @app.route('/api/v1/fleet/vehicle/currpos', methods=['GET'])
 def get_current_position():
     (lat, lon) = traciServer.get_current_van_position()
