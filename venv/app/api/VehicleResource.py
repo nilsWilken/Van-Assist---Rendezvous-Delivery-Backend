@@ -1,5 +1,6 @@
 import threading
 import json
+import sys
 from app.config.firebase import FirebaseCloudMessaging
 from app.config.firebase.FirebaseCloudMessaging import CloudMessage
 
@@ -120,6 +121,22 @@ def handle_status():
 
     elif request.method == "PUT":
         vehicle_status = request.json["status"]
+        traciServer.set_vehicle_status(vehicle_status)
+        response = Response(HttpStatus.OK, "", None)
+        return jsonify(response.serialize())
+
+@app.route('/api/v1/fleet/vehicle/statectrl', methods=['GET', 'PUT'])
+def handle_status_v2():
+    if request.method == "GET":
+        current_vehicle_status = traciServer.get_vehicle_status()
+        response = Response(HttpStatus.OK, "", {"status": current_vehicle_status})
+        return jsonify(response.serialize())
+
+    elif request.method == "PUT":
+        print("STATECTRL CALLED")
+        print(request.data)
+        json_content = json.loads(request.data)
+        vehicle_status = json_content["vehicle_status"]
         traciServer.set_vehicle_status(vehicle_status)
         response = Response(HttpStatus.OK, "", None)
         return jsonify(response.serialize())

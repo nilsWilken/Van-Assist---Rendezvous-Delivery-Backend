@@ -354,6 +354,10 @@ class TraciServer:
 
     def set_vehicle_door_status(self, door_status):
         self.door_status = door_status
+        if door_status == "OPEN" and self.get_vehicle_status() == "PARKING":
+            self.set_vehicle_status("DOORSOPEN")
+        elif self.get_vehicle_status == "DOORSOPEN" and door_status == "CLOSED":
+            self.set_vehicle_status("PARKING")
 
     def get_vehicle_problem_status(self):
         return self.problem_status
@@ -478,6 +482,7 @@ class TraciServer:
                     current_target = self.get_current_target_position()
                     self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
                     self.set_vehicle_status("PARKING")
+                    
                     TraciHandler.driveToNextParkingAreaWasCalled = False
                     self.rerouteStarted = False
 
