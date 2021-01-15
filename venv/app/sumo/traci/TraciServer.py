@@ -356,7 +356,7 @@ class TraciServer:
         self.door_status = door_status
         if door_status == "OPEN" and self.get_vehicle_status() == "PARKING":
             self.set_vehicle_status("DOORSOPEN")
-        elif self.get_vehicle_status == "DOORSOPEN" and door_status == "CLOSED":
+        elif self.get_vehicle_status() == "DOORSOPEN" and door_status == "CLOSED":
             self.set_vehicle_status("PARKING")
 
     def get_vehicle_problem_status(self):
