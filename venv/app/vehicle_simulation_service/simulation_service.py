@@ -48,13 +48,12 @@ class simulation_service:
         content_json = json.dumps(content)
         
         path = "/api/v1/fleet/vehicle/" + vehicle_id + "/currpos"
-
         try:
             response = self.server_conn.send_request_to_server("PUT", path, t_body=content_json)
             response_content = response.read()
 
             # Print response
-            print(response_content)
+            print("Response from API call to path " + path + " at server with ip " + str(vehicle_simulation_config.SERVER_IP) + " and port " + str(vehicle_simulation_config.SERVER_PORT) + " :" + str(response_content))
         except:
             print("Connection refused!")
             self.authenticated = False
@@ -74,7 +73,7 @@ class simulation_service:
             response_content = response.read()
 
             # Print response
-            print(response_content)
+            print("Response from API call to path " + path + " at server with ip " + str(vehicle_simulation_config.SERVER_IP) + " and port " + str(vehicle_simulation_config.SERVER_PORT) + " :" + str(response_content))
         except:
             print("Connection refused!")
             self.authenticated = False
@@ -82,7 +81,7 @@ class simulation_service:
 
     def send_current_vehicle_status(self, vehicle_id, status):
         self.check_authentication()
-        content = {"status": status}
+        content = {"vehicle_status": status}
         content_json = json.dumps(content)
 
         path = "/api/v1/fleet/vehicle/" + vehicle_id + "/drvsysstatus"
@@ -92,7 +91,7 @@ class simulation_service:
             response_content = response.read()
 
             # Print response
-            print(response_content)
+            print("Response from API call to path " + path + " at server with ip " + str(vehicle_simulation_config.SERVER_IP) + " and port " + str(vehicle_simulation_config.SERVER_PORT) + " :" + str(response_content))
         except:
             print("Connection refused!")
             self.authenticated = False
@@ -112,9 +111,9 @@ class simulation_service:
             response = self.server_conn.send_request_to_server("PUT", path, t_body=content_json)
             response_content = response.read()
 
-            print("POSREACHED SENT!")
+            #print("POSREACHED SENT!")
             # Print response
-            print(response)
+            print("Response from API call to path " + path + " at server with ip " + str(vehicle_simulation_config.SERVER_IP) + " and port " + str(vehicle_simulation_config.SERVER_PORT) + " :" + str(response))
         except:
             print("Connection refused!")
             self.authenticated = False

@@ -174,7 +174,7 @@ def test_currtargetpos():
     return jsonify(response.serialize())
 
 
-@app.route('/api/v1/fleet/vehicle/exampleID/status', methods=['PUT'])
+@app.route('/api/v1/fleet/vehicle/exampleID/drvsysstatus', methods=['PUT'])
 def test_status():
     print("RECEIVED CURRENT STATUS: " + str(json.loads(request.data)))
     response = Response(HttpStatus.OK, "", None)
