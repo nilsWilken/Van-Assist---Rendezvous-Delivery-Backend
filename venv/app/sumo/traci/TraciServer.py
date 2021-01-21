@@ -317,13 +317,18 @@ class TraciServer:
         #        returnPA = pa
         #        print(pa)
         #        break
-        returnPA = self.get_closest_parking_area(lat, lon)
-        self.nextPaID = returnPA["id"]
-        paEdge = returnPA["edge"]
+        returnPA = ""
         try:
-            if(TraciHandler.stopSimulation == False and self.step < 86400):
-                self.nextPaEdge = paEdge
-                self.checkNewPark = True
+            if(TraciHandler.stopSimulation == False and TraciHandler.startSimulationWasCalledFirst == True and self.step < 86400):
+                returnPA = self.get_closest_parking_area(lat, lon)
+                if self.nextPaID is not returnPA["id"]:
+                    self.nextPaID = returnPA["id"]
+                    paEdge = returnPA["edge"]
+                    self.nextPaEdge = paEdge
+                    self.checkNewPark = True
+                else:
+                    TraciHandler.driveToNextParkingAreaWasCalled=False
+                    print("Already located at the closest parking area to that point!")
         except:
             print("An exception occured!")
         return returnPA
@@ -487,6 +492,8 @@ class TraciServer:
                     self.rerouteStarted = False
 
             if self.checkNewPark == True:
+                print("Target edge: " + str(self.nextPaEdge))
+                print("Target PArea: " + str(self.nextPaID))
                 traci.vehicle.changeTarget(vehID='dpd_van', edgeID=self.nextPaEdge)
                 traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID=self.nextPaID, until=86400.0, flags=65)
                 if traci.vehicle.isStopped('dpd_van'):
