@@ -56,6 +56,13 @@ def setDriveTopPos():
     response = Response(HttpStatus.CREATED, "", paResponse)
     return jsonify(response.serialize())
 
+@app.route('/api/v1/fleet/vehicle/ruleoverride', methods=['PUT'])
+def setRuleoverride():
+    print(request.data)
+    traciServer.intervention_solved()
+    response = Response(HttpStatus.OK, "Successfull", None)
+    return jsonify(response.serialize())
+
 
 @app.route('/vehicle/parkingArea/getNext', methods=['GET'])
 def getNextParkingArea():

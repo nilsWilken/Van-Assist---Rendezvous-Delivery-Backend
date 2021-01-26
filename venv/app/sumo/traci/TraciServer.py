@@ -13,10 +13,13 @@ from app.config.vehicle_simulation import vehicle_simulation_config
 
 import time
 
-
 class TraciServer:
-
-    VEHICLE_STATES = ["IDLE", "AUTO_DRIVING", "MAN_DRIVING", "PARKING", "WAITING", "DOORSOPEN", "INTERVENTION", "HARD_FAULT"]
+    
+    VEHICLE_STATES = ["IDLE", "AUTO_DRIVING", "MAN_DRIVING", "PARKING", "WAITING", "DOORS_OPEN", "INTERVENTION", "HARD_FAULT"]
+    INTERVENTION_LAT = 49.416761
+    INTERVENTION_LON = 8.684942
+    FILTER_POSITION_LAT = 49.419171
+    FILTER_POSITION_LON = 8.684352
 
     __instance = None
     step = 0
@@ -189,15 +192,7 @@ class TraciServer:
         return (edge[0], float(beginning_x), float(beginning_y), float(end_x), float(end_y))
 
 
-    #########################################################
-    # Parse XML with parkingAreas
-    # Get the name of the parkingArea passed as parkingArea ID (paID)
-    # return name of the searched ParkingArea
-    def retrieve_parking_area_name(self, paID):
-        path = self.configurePath("parkingAreas.add.xml")
-        doc = etree.parse(path)
-        paName = doc.xpath("//parkingArea[@id='" + paID + "']/@name")
-        return paName[0]
+
 
 
     #########################################################
@@ -240,7 +235,139 @@ class TraciServer:
         self.p2 = Proj(proj='latlong', datum='WGS84')
 
 
-    #########################################################
+ 
+
+
+    """A new parking area is set in this method """
+    def setNewParkPos(self, paID, paEdge):
+        self.nextPaID = paID
+        for pa in TraciHandler.parkingAreaList:
+            if pa["id"] == self.nextPaID:
+                returnPA = pa
+                print(pa)
+                break
+        try:
+            if (TraciHandler.stopSimulation==False and self.step < 86400):#
+                self.nextPaEdge = paEdge
+                self.checkNewPark = True
+        except:
+            print("An exception occurred")
+        return returnPA
+
+    def setNewParkingPosLatLon(self, lat, lon):
+        #print(len(TraciHandler.parkingAreaList))
+        #for pa in TraciHandler.parkingAreaList:
+        #    print(str(pa["lat"]) + " " + str(pa["long"]))
+        #    if pa["lat"] == lat and pa["long"] == lon:
+        #        self.nextPaID = pa["id"]
+        #        paEdge = pa["edge"]
+        #        returnPA = pa
+        #        print(pa)
+        #        break
+        returnPA = ""
+        try:
+            if(TraciHandler.stopSimulation == False and TraciHandler.startSimulationWasCalledFirst == True and self.step < 86400):
+                returnPA = self.get_closest_parking_area(lat, lon)
+                filter_position_pa = self.get_closest_parking_area(TraciServer.FILTER_POSITION_LAT, TraciServer.FILTER_POSITION_LON)
+                intervention_pa = self.get_closest_parking_area(TraciServer.INTERVENTION_LAT, TraciServer.INTERVENTION_LON)
+                if returnPA["id"] == filter_position_pa["id"]:
+                    if self.nextPaID == intervention_pa["id"]:
+                        returnPA = filter_position_pa
+                    else:
+                        returnPA = intervention_pa
+
+                if self.nextPaID is not returnPA["id"] and self.get_vehicle_status() is not "INTERVENTION" and self.get_vehicle_status() is not "HARD_FAULT":
+                    self.nextPaID = returnPA["id"]
+                    paEdge = returnPA["edge"]
+                    self.nextPaEdge = paEdge
+                    self.checkNewPark = True
+                else:
+                    TraciHandler.driveToNextParkingAreaWasCalled=False
+                    print("Already located at the closest parking area to that point!")
+        except:
+            print("An exception occured!")
+        return returnPA
+
+    def intervention_solved(self):
+        self.set_vehicle_status("AUTO_DRIVING")
+        TraciHandler.driveToNextParkingAreaWasCalled = True
+        self.setNewParkingPosLatLon(TraciServer.FILTER_POSITION_LAT, TraciServer.FILTER_POSITION_LON)
+
+    def hard_fault_solved(self):
+        self.set_vehicle_status("PARKING")
+
+
+    def get_current_target_position(self):
+        if self.get_vehicle_status() == "HARD_FAULT":
+            return None
+        if self.nextPaID == self.get_closest_parking_area(TraciServer.INTERVENTION_LAT, TraciServer.INTERVENTION_LON)["id"]:
+            return self.get_closest_parking_area(TraciServer.FILTER_POSITION_LAT, TraciServer.FILTER_POSITION_LON)
+        for pa in TraciHandler.parkingAreaList:
+            if pa["id"] == self.nextPaID:
+                return pa
+        return None
+
+
+################ --- UPDATE VEHICLE STATUS --- ######################
+    
+    def get_current_van_position(self):
+        return (self.current_van_lat_geo, self.current_van_long_geo)
+
+
+    def set_vehicle_status(self, status):
+        for x in range(0, len(TraciServer.VEHICLE_STATES)):
+            if TraciServer.VEHICLE_STATES[x] == status:
+                self.vehicle_status = x
+
+    
+    def get_vehicle_status(self):
+        return TraciServer.VEHICLE_STATES[self.vehicle_status]
+
+    def get_vehicle_door_status(self):
+        return self.door_status
+
+    def set_vehicle_door_status(self, door_status):
+        self.door_status = door_status
+        if door_status == "DOORS_OPEN" and self.get_vehicle_status() == "PARKING":
+            self.set_vehicle_status("DOORS_OPEN")
+        elif self.get_vehicle_status() == "DOORS_OPEN" and door_status == "DOORS_CLOSED":
+            self.set_vehicle_status("PARKING")
+
+    def get_vehicle_problem_status(self):
+        return self.problem_status
+
+    def set_vehicle_problem_status(self, problem_status):
+        self.problem_status = problem_status
+
+    def get_vehicle_problem_message(self):
+        return self.problem_message
+
+    def set_vehicle_problem_message(self, problem_message):
+        self.problem_message = problem_message
+
+    def update_fcm_token(self, fcm_token):
+        self.fcm_token = fcm_token
+
+
+################ --- PARKING AREA UTILITIES --- ######################
+
+    def get_closest_parking_area(self, lat, lon):
+        x = (lat, lon)
+        distances = {}
+        for x in range(0, len(TraciHandler.parkingAreaList)):
+            pa = TraciHandler.parkingAreaList[x]
+            distance = self.get_euclidean_distance(lat, pa["lat"], lon, pa["long"])
+            distances[x] = distance
+        min_x = min(distances, key=distances.get)
+
+        return TraciHandler.parkingAreaList[min_x]
+
+    def get_euclidean_distance(self, x1, x2, y1, y2):
+        x = (x1-x2)**2
+        y = (y1-y2)**2
+        return math.sqrt(x+y)
+
+       #########################################################
     # SelectNextParking
     # Current Location of the van
     # return closest parkingLocation (for now the name, later the id)
@@ -290,112 +417,18 @@ class TraciServer:
             return self.retrieve_parking_area_name(k)
             break
 
-
-    """A new parking area is set in this method """
-    def setNewParkPos(self, paID, paEdge):
-        self.nextPaID = paID
-        for pa in TraciHandler.parkingAreaList:
-            if pa["id"] == self.nextPaID:
-                returnPA = pa
-                print(pa)
-                break
-        try:
-            if (TraciHandler.stopSimulation==False and self.step < 86400):#
-                self.nextPaEdge = paEdge
-                self.checkNewPark = True
-        except:
-            print("An exception occurred")
-        return returnPA
-
-    def setNewParkingPosLatLon(self, lat, lon):
-        #print(len(TraciHandler.parkingAreaList))
-        #for pa in TraciHandler.parkingAreaList:
-        #    print(str(pa["lat"]) + " " + str(pa["long"]))
-        #    if pa["lat"] == lat and pa["long"] == lon:
-        #        self.nextPaID = pa["id"]
-        #        paEdge = pa["edge"]
-        #        returnPA = pa
-        #        print(pa)
-        #        break
-        returnPA = ""
-        try:
-            if(TraciHandler.stopSimulation == False and TraciHandler.startSimulationWasCalledFirst == True and self.step < 86400):
-                returnPA = self.get_closest_parking_area(lat, lon)
-                if self.nextPaID is not returnPA["id"]:
-                    self.nextPaID = returnPA["id"]
-                    paEdge = returnPA["edge"]
-                    self.nextPaEdge = paEdge
-                    self.checkNewPark = True
-                else:
-                    TraciHandler.driveToNextParkingAreaWasCalled=False
-                    print("Already located at the closest parking area to that point!")
-        except:
-            print("An exception occured!")
-        return returnPA
+        #########################################################
+    # Parse XML with parkingAreas
+    # Get the name of the parkingArea passed as parkingArea ID (paID)
+    # return name of the searched ParkingArea
+    def retrieve_parking_area_name(self, paID):
+        path = self.configurePath("parkingAreas.add.xml")
+        doc = etree.parse(path)
+        paName = doc.xpath("//parkingArea[@id='" + paID + "']/@name")
+        return paName[0]
 
 
-    def get_current_target_position(self):
-        for pa in TraciHandler.parkingAreaList:
-            if pa["id"] == self.nextPaID:
-                return pa
-        return None
-
-    
-    def get_current_van_position(self):
-        return (self.current_van_lat_geo, self.current_van_long_geo)
-
-
-    def set_vehicle_status(self, status):
-        for x in range(0, len(self.VEHICLE_STATES)):
-            if self.VEHICLE_STATES[x] == status:
-                self.vehicle_status = x
-
-    
-    def get_vehicle_status(self):
-        return self.VEHICLE_STATES[self.vehicle_status]
-
-    def get_vehicle_door_status(self):
-        return self.door_status
-
-    def set_vehicle_door_status(self, door_status):
-        self.door_status = door_status
-        if door_status == "OPEN" and self.get_vehicle_status() == "PARKING":
-            self.set_vehicle_status("DOORSOPEN")
-        elif self.get_vehicle_status() == "DOORSOPEN" and door_status == "CLOSED":
-            self.set_vehicle_status("PARKING")
-
-    def get_vehicle_problem_status(self):
-        return self.problem_status
-
-    def set_vehicle_problem_status(self, problem_status):
-        self.problem_status = problem_status
-
-    def get_vehicle_problem_message(self):
-        return self.problem_message
-
-    def set_vehicle_problem_message(self, problem_message):
-        self.problem_message = problem_message
-
-    def update_fcm_token(self, fcm_token):
-        self.fcm_token = fcm_token
-
-
-    def get_closest_parking_area(self, lat, lon):
-        x = (lat, lon)
-        distances = {}
-        for x in range(0, len(TraciHandler.parkingAreaList)):
-            pa = TraciHandler.parkingAreaList[x]
-            distance = self.get_euclidean_distance(lat, pa["lat"], lon, pa["long"])
-            distances[x] = distance
-        min_x = min(distances, key=distances.get)
-
-        return TraciHandler.parkingAreaList[min_x]
-
-    def get_euclidean_distance(self, x1, x2, y1, y2):
-        x = (x1-x2)**2
-        y = (y1-y2)**2
-        return math.sqrt(x+y)
-        
+################ --- ACTUAL SIMULATION HANDLING --- ######################
 
     """--------------IMPORTANT---------------"""
     """This Method starts and manages the simulation"""
@@ -471,6 +504,7 @@ class TraciServer:
                 self.set_vehicle_status("AUTO_DRIVING")
                 self.parkingArrived = traci.vehicle.isStoppedParking(vehID='dpd_van')
 
+        #SEND LOCATION UPDATES
                 """Updates the van location every 3 seconds"""
                 if self.step % 3 == 0:
                     van_lat_sumo, van_long_sumo  = traci.vehicle.getPosition(vehID='dpd_van')
@@ -480,17 +514,25 @@ class TraciServer:
                     if self.fcm_token != "" and self.fcm_token != None:
                         FirebaseCloudMessaging.sendCurrentPosition(self.fcm_token, CloudMessage.CURRENT_VAN_LOCATION, van_lat_geo, van_long_geo)
 
+        #SEND NOTIFICATION WHEN DESTINATION IS REACHED
                 """Sends a notification to the app when the van has arrived in its paking position"""
                 if(self.parkingArrived and self.rerouteStarted):
                     if self.fcm_token != "" and self.fcm_token != None:
                         FirebaseCloudMessaging.sendMessage(self.fcm_token, CloudMessage.VEHICLE_IS_IN_NEXT_PARKING_AREA)
-                    current_target = self.get_current_target_position()
-                    self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
-                    self.set_vehicle_status("PARKING")
+                    
+                    #WHEN VEHICLE ARRIVED AT SPECIFIED INTERVENTION AREA
+                    if self.nextPaID == self.get_closest_parking_area(TraciServer.INTERVENTION_LAT, TraciServer.INTERVENTION_LON)["id"]:
+                        #self.sim_service.send_vehicle_intervention(vehicle_simulation_config.VEHICLE_ID, TraciServer.INTERVENTION_LAT, TraciServer.INTERVENTION_LON)
+                        self.set_vehicle_status("INTERVENTION")
+                    else:
+                        current_target = self.get_current_target_position()
+                        self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
+                        self.set_vehicle_status("PARKING")
                     
                     TraciHandler.driveToNextParkingAreaWasCalled = False
                     self.rerouteStarted = False
 
+        #CHECK WHETHER THE VEHICLE IS REQUESTED TO DRIVE TO A NEW PARKING AREA
             if self.checkNewPark == True:
                 print("Target edge: " + str(self.nextPaEdge))
                 print("Target PArea: " + str(self.nextPaID))
@@ -506,7 +548,7 @@ class TraciServer:
             self.step += 1
             traci.simulationStep(self.step)
 
-
+        #STOP THE SERVER
         print("Stopping the TraCI server...")
         self.nextPaID = ""
         self.nextPaEdge = ""
