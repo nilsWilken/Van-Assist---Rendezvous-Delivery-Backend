@@ -31,12 +31,19 @@ class simulation_service:
         try:
             response = self.server_conn.send_request_to_server("POST", "/api/v1/security/authenticate", t_body=content_json)
             response_content = response.read()
+            #response_json = json.loads(response_content.decode('utf-8').replace("'", '"'))
+            
+            response_content = response_content.decode('utf-8').replace("'", '"')
+            print(response.status)
 
-            # Print response
-            print("Sucessfully authenticated!")
-            print(response_content)
-            self.authenticated = True
-        except:
+            if response.status == 200:
+                # Print response
+                print("Sucessfully authenticated!")
+                self.authenticated = True
+            else:
+                print("Authentication call failed!")
+        except Exception as e:
+            print(e)
             print("Authentication call failed!")
 
     
