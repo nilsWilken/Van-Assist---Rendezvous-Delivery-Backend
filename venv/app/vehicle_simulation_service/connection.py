@@ -27,9 +27,9 @@ class connection:
 
             ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_context.load_cert_chain(cert_path, key_path)
-            return http.client.HTTPSConnection(self.server_ip, port=self.port, context=ssl_context)
+            return http.client.HTTPSConnection(self.server_ip, port=self.port, context=ssl_context, timeout=vehicle_simulation_config.CONNECTION_ATTEMPT_TIMEOUT)
         else: 
-            return http.client.HTTPConnection(self.server_ip, self.port)
+            return http.client.HTTPConnection(self.server_ip, self.port, timeout=vehicle_simulation_config.CONNECTION_ATTEMPT_TIMEOUT)
 
 
     def send_request_to_server(self, method, path, t_body=None, t_header=None):

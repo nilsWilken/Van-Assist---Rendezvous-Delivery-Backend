@@ -526,7 +526,8 @@ class TraciServer:
                         self.set_vehicle_status("INTERVENTION")
                     else:
                         current_target = self.get_current_target_position()
-                        self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
+                        if vehicle_simulation_config.START_COMM_SIMULATION_THREAD:
+                            self.sim_service.send_position_reached(vehicle_simulation_config.VEHICLE_ID, current_target["lat"], current_target["long"])
                         self.set_vehicle_status("PARKING")
                     
                     TraciHandler.driveToNextParkingAreaWasCalled = False

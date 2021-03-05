@@ -78,7 +78,7 @@ def startDay():
         TraciHandler.startSimulationWasCalledFirst=True
         startTraci(float(seconds_since_midnight), fcm_token)
         print("Traci started!")
-        return jsonify(ResponseMessage.OK.serialize())
+        return jsonify(ResponseMessage.SIMULATION_IS_NOT_RUNNING.serialize())
     return jsonify(ResponseMessage.NOT_FOUND.serialize())
 
 
