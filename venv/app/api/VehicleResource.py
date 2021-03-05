@@ -40,6 +40,8 @@ def setNextparkingLocation():
         TraciHandler.driveToNextParkingAreaWasCalled = True
         newVehicleParkingPos = request.json['parkingArea']['id']
         newVehicleParkingEdge = request.json['parkingArea']['edge']
+        print("ID: " + newVehicleParkingPos)
+        print("Edge: " + newVehicleParkingEdge)
         paResponse = setNewParkingPos(newVehicleParkingPos, newVehicleParkingEdge)
         response = Response(HttpStatus.CREATED, "", paResponse)
         return jsonify(response.serialize())

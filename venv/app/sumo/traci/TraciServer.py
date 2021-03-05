@@ -244,7 +244,7 @@ class TraciServer:
         for pa in TraciHandler.parkingAreaList:
             if pa["id"] == self.nextPaID:
                 returnPA = pa
-                print(pa)
+                #print(pa)
                 break
         try:
             if (TraciHandler.stopSimulation==False and self.step < 86400):#
