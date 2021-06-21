@@ -6,6 +6,7 @@ from app.database.service import ParcelService
 from app.config.firebase import Authentication
 from app.database.service import CourierService
 from app.database.service import DeliveryService
+from app.database.service import ParkingAreaService
 
 
 """API Definition for Parcel specific data manipulation """
@@ -111,6 +112,7 @@ def updateParcelOrder():
 def resetParcel():
     ParcelService.resetParcelState()
     CourierService.updateAllVerificationToken()
+    ParkingAreaService.resetNextParkingArea()
     response = Response(HttpStatus.OK, "Reset successful!", None)
     return jsonify(response.serialize())
 
@@ -120,6 +122,7 @@ def resetParcelById():
     courierId = request.headers.get('courier_id')
     ParcelService.resetParcelStateById(courierId)
     CourierService.updateVerificationTokenById(courierId)
+    ParkingAreaService.resetNextParkingArea()
     response = Response(HttpStatus.OK, "Reset for courier with id " + str(courierId) + " was successfull!", None)
     return jsonify(response.serialize())
 

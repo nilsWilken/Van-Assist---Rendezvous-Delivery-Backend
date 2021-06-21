@@ -247,9 +247,12 @@ class TraciServer:
                 #print(pa)
                 break
         try:
-            if (TraciHandler.stopSimulation==False and self.step < 86400):#
-                self.nextPaEdge = paEdge
-                self.checkNewPark = True
+            if (TraciHandler.stopSimulation==False and TraciHandler.startSimulationWasCalledFirst == True and self.step < 86400):#
+                if self.nextPaID is not returnPA["id"] and self.get_vehicle_status() is not "INTERVENTION" and self.get_vehicle_status() is not "HARD_FAULT":
+                    self.nextPaEdge = paEdge
+                    self.checkNewPark = True
+                else:
+                    TraciHandler.driveToNextParkingAreaWasCalled=False
         except:
             print("An exception occurred")
         return returnPA
@@ -484,6 +487,9 @@ class TraciServer:
                           departSpeed='0', arrivalLane='current', arrivalPos='max', arrivalSpeed='current', fromTaz='',
                           toTaz='', line='', personCapacity=2, personNumber=1)
 
+        
+        #traci.vehicle.changeTarget(vehID='dpd_van', edgeID='-429024483#3')
+        #traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID='parkingArea_-429024483#3_0_13', until=86400.0, flags=65)
         traci.vehicle.setRouteID('dpd_van', 'routeDPD')
 
         """Checks if the simulation was stopped from the app or it run for longer than one day (86400 seconds)"""
