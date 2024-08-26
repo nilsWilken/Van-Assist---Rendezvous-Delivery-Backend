@@ -7,7 +7,10 @@ from app.config.firebase import Authentication
 from app.database.service import CourierService
 from app.database.service import DeliveryService
 from app.database.service import ParkingAreaService
+from app.sumo.traci.TraciServer import TraciServer
 
+
+traciServer = TraciServer()
 
 """API Definition for Parcel specific data manipulation """
 """" Header: uid, courier_id, verification_token """
@@ -113,6 +116,7 @@ def resetParcel():
     ParcelService.resetParcelState()
     CourierService.updateAllVerificationToken()
     ParkingAreaService.resetNextParkingArea()
+    traciServer.resetCurrentPosition()
     response = Response(HttpStatus.OK, "Reset successful!", None)
     return jsonify(response.serialize())
 
@@ -123,6 +127,7 @@ def resetParcelById():
     ParcelService.resetParcelStateById(courierId)
     CourierService.updateVerificationTokenById(courierId)
     ParkingAreaService.resetNextParkingArea()
+    traciServer.resetCurrentPosition()
     response = Response(HttpStatus.OK, "Reset for courier with id " + str(courierId) + " was successfull!", None)
     return jsonify(response.serialize())
 

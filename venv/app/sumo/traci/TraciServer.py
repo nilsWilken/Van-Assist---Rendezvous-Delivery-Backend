@@ -45,7 +45,7 @@ class TraciServer:
     y_off = 0.0
     p1 = None
     p2 = None
-    current_van_lat_geo = 49.416937
+    current_van_lat_geo = 49.416972
     current_van_long_geo = 8.678421
     vehicle_status = 0
     sim_service = None
@@ -430,6 +430,10 @@ class TraciServer:
         paName = doc.xpath("//parkingArea[@id='" + paID + "']/@name")
         return paName[0]
 
+    def resetCurrentPosition(self):
+        self.current_van_lat_geo = 49.416972
+        self.current_van_long_geo = 8.678421
+
 
 ################ --- ACTUAL SIMULATION HANDLING --- ######################
 
@@ -491,6 +495,11 @@ class TraciServer:
         #traci.vehicle.changeTarget(vehID='dpd_van', edgeID='-429024483#3')
         #traci.vehicle.setParkingAreaStop(vehID='dpd_van', stopID='parkingArea_-429024483#3_0_13', until=86400.0, flags=65)
         traci.vehicle.setRouteID('dpd_van', 'routeDPD')
+
+        #van_lat_sumo, van_long_sumo  = traci.vehicle.getPosition(vehID='dpd_van')
+        #(van_long_geo, van_lat_geo) = self.convertGEOfromXYWithoutConfiguration(van_lat_sumo, van_long_sumo)
+        #self.current_van_lat_geo = van_lat_geo
+        #self.current_van_long_geo = van_long_geo
 
         """Checks if the simulation was stopped from the app or it run for longer than one day (86400 seconds)"""
         while TraciHandler.stopSimulation==False and self.step <= 86400:
